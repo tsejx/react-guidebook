@@ -6,8 +6,6 @@ React 引入 JSX 主要是为了方便 View 层组件化，承载了构建 HTML 
 
 > 本质上来说，JSX 只是为 `React.createElement(component, props, ...children)` 提供的一种语法糖。
 
-- **
-
 ### 基本语法
 
 🔍 React 和 HTML DOM属性的区别 [传送门](http://react.yubolun.com/docs/introducing-jsx.html)
@@ -44,7 +42,7 @@ import React from 'react'
 
 ```js
 React.createElement(
-	MyButton,
+    MyButton,
     {color: 'blue', shadow: 2},
     'Click Me'
 )
