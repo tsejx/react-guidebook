@@ -50,17 +50,10 @@ const ElementProps = () => {
 
 ```jsx
 // Wrong
-<Foo 
-    UserName="Ben"
-    phone_number={13800000000}
-/>
+<Foo UserName="Ben" phone_number={13800000000} />
 
 // Correct
-<Foo
-    userName="Ben"
-    phoneNumber={13800000000}
-    
-/>
+<Foo userName="Ben" phoneNumber={13800000000} />
 ```
 
 ### 可省略属性值
@@ -69,14 +62,10 @@ const ElementProps = () => {
 
 ```jsx
 // Wrong
-<Foo
-	hidden={true}   
-/>
+<Foo hidden={true}/>
 
 // Correct
-<Foo
-	hidden
-/>
+<Foo hidden />
 ```
 
 ### `key` 属性
