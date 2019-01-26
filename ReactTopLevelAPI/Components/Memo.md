@@ -1,12 +1,12 @@
 ## React.memo
 
-✨ React v16.6.0 新增 memo 新特性 [文档传送门](https://reactjs.org/docs/react-api.html#reactmemo)
+✨ React v16.6.0 新增 memo 新特性 [🇨🇳中文文档](https://reactjs.org/docs/react-api.html#reactmemo)
 
 `React.memo` 是一个高阶组件，类似于 `React.PureComponent`，不同的是 `React.memo` 适用于 `functional` 组件，而 `React.PureComponent` 适用于 `class` 组件。
 
 这种方式依然是一种对象的浅比较，有复杂对象时无法重新渲染。
 
-### 使用方法
+### 使用指南
 
 ```jsx
 function MyComponent(props) {

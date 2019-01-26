@@ -2,11 +2,11 @@
 
 在 React Component 的生命周期中，有一个 `shouldComponentUpdate` 方法。这个方法默认返回值是 `true`。
 
-这意味着就算没有改变组件的 props 或者 state，也会导致组件的重绘，也就是会重新执行 `render()` 函数。这就经常导致组件因为不相关数据的改变导致重绘，这极大的降低了 React 的渲染效率。
+这意味着就算没有改变组件的 Props 或者 State，也会导致组件的重绘，也就是会重新执行 `render()` 函数。这就经常导致组件因为不相关数据的改变导致重绘，这极大的降低了 React 的渲染效率。
 
-PureComponent 与 Component 的不同在于，PureComponent 内部会基于 Props 和 State 重新渲染前后自动执行一次第一层的 shallowEqual（浅比较），来决定是否更新组件，浅比较类似于浅拷贝，只会比较第一层。
+PureComponent 与 Component 的不同在于，PureComponent 内部会基于 Props 和 State 重新渲染前后自动执行一次第一层的 `shallowEqual`（浅比较），来决定是否更新组件，浅比较类似于浅拷贝，只会比较**第一层**。
 
-📍 **组件函数要点：**
+📌 **组件函数要点：**
 
 * 引用和第一层数据都没有发生改变，`render()` 方法就不会触发重新渲染
 * 虽然第一层数据没变，但引用变了，就会造成虚拟 DOM 计算的浪费 [🌐性能问题](#性能问题)
