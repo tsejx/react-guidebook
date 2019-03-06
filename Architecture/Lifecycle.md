@@ -5,23 +5,23 @@
 - Mounting
 
   - [**`constructor()`**](#constructor)
-  - `static getDerivedStateFromProps()`
-  - ⚠️ [`UNSAFE_componentWillMount()`](UNSAFE_componentWillMount)
+  - [`static getDerivedStateFromProps()`](#static-getderivedstatefrompropsnextprops-prevstate)
+  - ⚠️ [`UNSAFE_componentWillMount()`](#unsafe_componentwillmount)
   - [**`render()`**](#render)
-  - **`componentDidMount()`**
+  - [**`componentDidMount()`**](#componentdidmount)
 - Updating
 
-  - `static getDerivedStateFromProps()`
-  - `shouldComponentUpdate()`
+  - [`static getDerivedStateFromProps()`](#unsafe_componentwillreceivepropsnextprops)
+  - [`shouldComponentUpdate()`](#shouldcomponentupdatenextprops-nextstate)
   - **`render()`**
-  - `getSnapshotBeforeUpdate()`
-  - **`componentDidMount()`**
+  - [`getSnapshotBeforeUpdate()`](#getsnapshotbeforeupdate)
+  - [**`componentDidUpdate()`**](#componentdidupdate)
 - Unmounting
 
-  - **`componentWillUnmount()`**
+  - [**`componentWillUnmount()`**](#componentwillunmount)
 - Error Handling
-  - `static getDerivedStateFromError()`
-  - `componentDidCatch()`
+  - [`static getDerivedStateFromError()`](#static-getderivedstatefromerrorerror)
+  - [`componentDidCatch()`](#componentdidcatcherror-info)
 
 状态组件的3个生命周期阶段
 
