@@ -90,6 +90,82 @@ const ElementProps = () => {
 
 `this.props.children` 表示当前组件嵌套的对象集合。
 
+### 默认值
+
+一般设置 React 组件的 Props 默认值有两种方式。
+
+**方法一：React 组件类中声明 defaultProps 作为静态属性。，该方法只有在浏览器编译之后才会生效**
+
+如果使用编译库 Babel 设置为 ES6 的转码方式将会抛出错，因为定义静态属性不属于 ES6，而在 ES7的草案中。ES6 的 Class 中只有静态方法，没有静态属性。
+
+```jsx
+class Foo extends React.Component {
+    // ...
+    static defaultProps = {
+        bar: 'Hello world!'
+    }
+}
+```
+
+**方法二：通过赋值特定的 defaultProps 属性为 Props 定义默认值：**
+
+由于是用 ES6 Class 语法创建组件，其内部只允许定义方法，而不能定义属性，Class 的属性只能定义在 Class 之外。所以 `defaultProps` 要写在组件外部。
+
+```jsx
+class Foo extends React.Component {
+    // ...
+}
+
+Foo.defaultProps = {
+    bar: 'Hello world!'
+}
+```
+
+**解决方案：**
+
+**将 Babel 设置为 ES7 的转码方式**
+
+```bash
+// Install babel
+npm install babel-core babel-loader --save-dev
+
+// For ES6/ES2015 support
+npm install babel-preset-es2015 --save-dev
+
+// If you want to use JSX
+npm install babel-preset-react --save-dev
+
+// If you want to use experimental ES7 features
+npm install babel-preset-stage-0 --save-dev
+```
+
+在项目根目录配置 `.babelrc` 文件。
+
+```json
+{
+  "presets": ["es2015", "stage-0"],
+  "plugins": ["transform-runtime"]
+}
+```
+
+如果使用 Webpack 的话，如下配置。
+
+```js
+loaders:[
+    {
+        test: /\.js[x]?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader' ,
+        query:{
+            presets:['es2015','stage-0','react'],
+            plugins:['transform-runtime']
+        },
+    }
+]
+```
+
+加入 `stage-0` 后就能尝试 ES7 语法了，`static` 也能在 `Class` 内部定义属性。
+
 ---
 
 深入研究：
