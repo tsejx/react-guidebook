@@ -27,7 +27,7 @@ class Component extends React.Component {
     }
     render(){
         return(
-        	<div>
+            <div>
             	<Modal modalVisible={this.state.modalVisible}
             </div>
         )
@@ -49,18 +49,25 @@ this.state.title = 'React'
 正确的修改方式是使用 `setState()`
 
 ```jsx
+// Correct
 this.setState({title: 'React'})
 ```
 
 #### State 的更新是异步的
 
-调用 `setState()`，组件的 state 并不会立即改变，`setState` 只是把要修改的状态放入一个队列中，React 会优化真正的执行时机，并且 React 会出于性能原因，可能会将多次 `setState` 的状态修改合并成一次状态修改。所以不要依赖当前的 State，计算下个 State。当真正执行状态修改时，依赖的 `this.state` 并不能保证是最新的State，因为 React 会把多次 State 的修改合并成一次，这时，`this.state` 将还是这几次 State 修改前的 State。另外需要注意的事，同样不能依赖当前的 Props 计算下个状态，因为 Props 一般也是从父组件的 State 中获取，依然无法确定在组件状态更新时的值。
+调用 `setState()`，组件的 State 并不会立即改变，`setState` 只是把要修改的状态放入一个队列中，React 会优化真正的执行时机，并且 React 会出于性能原因，可能会将多次 `setState` 的状态修改合并成一次状态修改。所以不要依赖当前的 State，计算下个 State。当真正执行状态修改时，依赖的 `this.state` 并不能保证是最新的State，因为 React 会把多次 State 的修改合并成一次，这时，`this.state` 将还是这几次 State 修改前的 State。另外需要注意的事，同样不能依赖当前的 Props 计算下个状态，因为 Props 一般也是从父组件的 State 中获取，依然无法确定在组件状态更新时的值。
 
-深入研究请点击：[setState](./setState.md)
+**总结 `state` 实现异步更新的理由**
+
+* React 运行机制的性能考虑
+* 这将破坏 `props` 和 `state` 之间的一致性，引起问题，非常难以调试
+* 这将使一些 React 新特性不能实现
+
+深入研究请查阅：[setState](./setState.md)
 
 #### State 的更新是一个浅合并的过程
 
-当调用 `setState()` 修改组件状态时，只需要传入发生改变的 State，而不是组件完整的 State，因为组件 State的更新是一个**浅合并（Shallow Merge）**的过程。
+当调用 `setState()` 修改组件状态时，只需要传入发生改变的 State，而不是组件完整的 State，因为组件 State的更新是一个 **浅合并(Shallow Merge)** 的过程。
 
 例如，一个组件的状态为：
 
@@ -162,6 +169,15 @@ this.setState({
     }
 })
 ```
+
+### State 与生命周期函数
+
+| 是否可以执行 setState | 生命周期函数                             |
+| --------------------- | ---------------------------------------- |
+| 可以执行              | componentWillReceiveProps                |
+| 尽量避免              | componentDidMount、componentDidUpdate    |
+| 无意义                | componentWillMount、componentWillUnmount |
+| 禁止                  | shouldComponentUpdat                     |
 
 #### 总结
 
