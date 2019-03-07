@@ -9,7 +9,7 @@
 📖 **语法**
 
 ```js
-React.Children.map(children, function[(thisArg)])
+React.Children.map(children, function[(child, index)])
 ```
 
 * 如果 `children` 是一个内嵌的**对象**或者**数组**，它将被遍历：不会传入容器对象到参数 `fn` 中。
@@ -28,7 +28,7 @@ React.Children.map(children, function[(thisArg)])
 **语法**
 
 ```js
-React.Children.forEach(children, function[(thisArg)])
+React.Children.forEach(children, function[(child, index)])
 ```
 
 类似于 `React.Children.map` 但是不返回数组。
@@ -97,3 +97,21 @@ class Sort extends React.Component {
 ```
 
 上例会渲染为三个排好序的字符串。
+
+### 改变Children属性
+
+即便通过以前方法可以在子组件内部获得 `this.props.children` 以及其每个成员，但是要在子组件中改造 `this.props.children`（例如添加 Props 属性等）则需要使用辅助方法 `React.cloneElement` 。
+
+`React.cloneElement` 会克隆一个 React 元素，第一个参数为将要克隆的 React 元素，第二个参数则为想要为该克隆元素添加的属性。
+
+```jsx
+renderChildren(){
+    return React.Children.map(this.props.children, (child, index) => {
+        return React.cloneElement(child, {
+            name: this.props.name,
+            number: this.state.number,
+            onChange: this.onChange,
+        })
+    })
+}
+```
