@@ -45,9 +45,15 @@
 
 在 ES6 中，在构造函数中通过 `this.state` 赋值完成状态初始化；通过给类属性（注意是类属性，而不是类实例对象的属性）`defaultProps` 赋值指定的 Props 初始值。
 
+React 规定 `constructor` 有三个参数，分别是 `props`、`context` 和 `updater`。
+
+* `props` 是属性，它是不可变的
+* `context` 是全局上下文。
+* `updater` 是包含一些更新方法的对象，`this.setState` 最终调用的是 `this.updater.enqueueSetState`；`this.forceUpdate` 最终调用的是 `this.updater.enqueueForceUpdate` 方法，所以这些 API 更多是 React 调用使用，暴露出来以备开发者不时之需。
+
 ```js
 class Sample extends React.Component {
-    constructor(props){
+    constructor(props, context, updater){
         super(props);
         this.state = {
            foo: 'InitailValue' 
@@ -62,7 +68,7 @@ Sample.defaultProps = {
 
 #### static getDerivedStateFromProps(nextProps, prevState)
 
-⏱ **触发时机**：组件化实例化后和接受新 Props 时都会触发该生命周期函数。
+⏱ **触发时机**：组件化实例化后（VirtualDOM 之后，实际 DOM 挂载之前）和接受新 Props 时都会触发该生命周期函数。
 
 🔙 **返回值**：该生命周期函数必须有返回值，它需要返回一个对象来更新 State，或者返回 `null` 来表明新 Props 不需要更新任何 State。
 
@@ -78,6 +84,28 @@ Sample.defaultProps = {
 - 在组件装载和更新阶段都会被调用。
 
 🎉 **适用场景**：表单获取默认值
+
+❓ **为什么该生命周期钩子要设计成静态方法呢？**
+
+这样开发者就访问不到 `this` 也就是实例，也就不能在里面调用实例方法或者 `setState` 了。
+
+```jsx
+import React, { Component } from 'react';
+
+class App extends Component {
+    render(){
+        return (
+          <div>React</div>
+        )
+    }
+}
+```
+
+这个生命周期钩子的使命是根据父组件传来的  Props 按需更新自己的 State，这种 State 叫做衍生 State。返回的对象就是要增量更新的 State。
+
+它被设计成静态方法的目的是保持该方法的纯粹，它就是用来定义衍生 State的，除此之外不应该在里面执行任何操作。
+
+这个生命周期钩子也经历了一些波折，原本它是被设计成 `初始化`、`父组件更新` 和 `接收到props` 才会触发，现在只要渲染就会触发，也就是 `初始化` 和 `更新阶段` 都会触发。
 
 🌰 **使用示例**：
 
