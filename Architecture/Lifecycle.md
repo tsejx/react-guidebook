@@ -376,11 +376,13 @@ class ErrorBoundary extends React.Component {
 
 ⏱ **触发时机**：该生命周期函数会在子孙组件抛出错误时触发。
 
-错误边界（Error Boundary）是React组件，并不是损坏的组件树。错误边界捕捉发生在子组件树中任意地方的 JavaScript 错误，打印错误日志，并且显示回退的用户界面。错误边界捕捉渲染期间、在生命周期方法中和在它们之下整棵树的构造函数中的错误。
+⚠️ **注意事项**：错误边界只能捕捉生命周期中的错误（`willMount` / `render` 等方法在内）。无法捕捉异步、事件回调中的错误，要捕捉和覆盖所有场景依然需要配合 `window.onerror`、`Promise.catch`、`try/catch` 等方式。
+
+错误边界（Error Boundary）是 React 组件，并不是损坏的组件树。错误边界捕捉发生在子组件树中任意地方的 JavaScript 错误，打印错误日志，并且显示回退的用户界面。错误边界捕捉渲染期间、在生命周期方法中和在它们之下整棵树的构造函数中的错误。
 
 可以定制一个只有 `componentDidCatch` 生命周期函数的 `ErrorBoundary` 组件。当捕获错误，则显示错误提示，如果没有捕获到错误，则显示子组件。
 
-将需要补货错误的组件作为 `ErrorBoundary` 的子组件渲染，一旦子组件抛出错误，整个应用依然不会崩溃，而是被 `ErrorBoundary` 捕获。
+将需要捕获错误的组件作为 `ErrorBoundary` 的子组件渲染，一旦子组件抛出错误，整个应用依然不会崩溃，而是被 `ErrorBoundary` 捕获。
 
 ```jsx
 import React, { Component } from 'react';
