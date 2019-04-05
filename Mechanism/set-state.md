@@ -66,16 +66,95 @@ this.setState({
 
 #### callback参数
 
-`callback` 参数为可选的回调函数，该函数会在状态（State）更新完成同时组件被重新渲染之后执行。通常，对于此类逻辑，官方推荐使用 `componentDidUpdate` 生命周期函数。
+`callback` 参数为可选的回调函数，该函数会在状态更新完成同时组件被重新渲染之后执行。通常，对于此类逻辑，官方推荐使用 `componentDidUpdate` 生命周期函数。
+
+### 基本特性
+
+在了解 `setState` 之前，我们先来简单了解 React 包装结构：**Transaction**
+
+事务（Transaction）是 React 中的一个调用结构，用于包装一个方法，结构为：`initialize - performance(method) - close`。通过事务，可以统一管理一个方法的开始与结束；处于事务流中，表示进程正在执行一些操作；
+
+![transaction-simplicity](../Screenshots/transaction-simplicity.jpg)
+
+#### 状态不能直接修改
+
+❓**为什么不同直接通过 `this.state` 直接修改状态？**
+
+在实际开发中，直接修改状态中的值，虽然事实上改变了组件的内部状态，但是却没有驱动组件进行重新渲染，既然组件没有重新渲染，用户界面中 `this.state` 值对应显示部分也就不会有变化。而 `this.setState()` 函数所处理的事务，首先是改变 `this.setState` 的值，然后驱动组件经历更新过程，这样用户界面上相应的 `this.state` 值才有相应的变化。
+
+```js
+// Error
+this.state.title = 'React'
+
+// Correct
+this.setState({title: 'React'})
+```
+
+#### 异步与同步
+
+`setState` 并不是单纯的异步或同步，这其实与调用时的环境相关。
+
+##### 合成事件和生命周期函数
+
+在**合成事件**和**生命周期函数**（除 `componentDidUpdate` ）中，`setState` 是异步的。
+
+**原因**：因为在 `setState` 的实现中，有一个判断：当更新策略正在事务流的执行中时，该组件更新会被推入 `dirtyComponents` 队列中等待执行；否则，开始执行 `batchedUpdates` 队列更新。
+
+* 在生命周期函数调用中，更新策略都处于更新之前，组件仍处于事务流中，而 `componentDidUpdate` 是在更新之后，此时组件已经不在事务流中，因此则会同步执行
+* 在合成事件中，React 是基于事务流完成的事件委托机制实现，也是处于事务流中；
+
+**问题**：无法在 `setState` 后马上从 `this.state` 上获取更新后的值。
+
+**解决**：如果需要马上同步去获取新值，可通过 `setState((prevState, props) => {}, callback)` 获取最新的状态。
+
+##### 原生事件和定时器
+
+在**原生事件**和 **`setTimeout`** 中，`setState` 是同步的，可以马上获取更新后的值。
+
+原因：原生事件是浏览器本身的实现，与事务流无关，自然是同步的；而 `setTimeout` 是放置于定时器线程中延后执行，此时事务流已结束，因此也是同步。
+
+❓ **为什么 React 处理 setState 要实行异步更新机制？**
+
+由于 `setState` 会触发组件的更新渲染，也就会运行组件的 diff 算法。如果每次 `setState` 都要运行这套流程，将会十分消耗性能，并且完全没有必要。
+
+**总结 `state` 实现异步更新的理由**：
+
+- React 运行机制的性能考虑
+- 这将破坏 `props` 和 `state` 之间的一致性，引起问题，非常难以调试
+- 这将使一些 React 新特性不能实现
+
+深入研究请查阅：📖 [setState](./setState.md)
+
+#### 批量更新
+
+在合成事件和生命周期函数中，`setState` 更新队列时，存储的是合并状态（`Object.assign`）。因此前面设置的键值会被后面设置的键值覆盖，最终只会执行一次更新。
+
+另外需要注意的事，同样不能依赖当前的 Props 计算下个状态，因为 Props 一般也是从父组件的 State 中获取，依然无法确定在组件状态更新时的值。
+
+由于 Fiber 及合并的问题，官方推荐可以传入函数的形式使用 `setState` 。使用函数式，可以用于避免 `setState` 的批量更新的逻辑，传入的函数将会被**顺序调用**。
+
+批量更新以生命周期为界：
+
+- 组件挂载前的所有 `setState` 批量更新
+- 组件挂载后到更新前的所有 `setState` 批量更新
+- 每次更新间隙的所有 `setState` 批量更新
+
+⚠️ 注意事项：
+
+* `setState` 合并，在合成事件和生命周期函数中多次连续调用会被优化为一次；
+* 当组件已被销毁，如果再次调用 `setState`，React 会被报错警告，通常有两种解决办法
+  * 将数据挂载在外部，通过 Props 传入，如放到 Redux 或父级中；
+  * 在组件内部维护一个状态量（isUnmounted），`componentWillUnmount` 中标记为 `true`，在 `setState` 前进行判断；
+  * 如果是异步请求副作用，可以在 `componentWillUnmount` 中取消未响应的异步请求。
 
 ### 最佳实践
 
 - [相同周期多次调用](#相同周期多次调用)
-- 同步更新策略
+- **同步更新策略**
   - [完成回调](#完成回调)
   - [传入状态计算函数](#传入状态计算函数)
 
-#### 相同周期多次调用
+#### 同周期多次调用
 
 当相同周期内多次调用 `setState()` 以更新相同的状态时，这些调用可能会被合并在一起。
 
@@ -256,18 +335,7 @@ class Component extends React.Component {
 
 在 React 中，**如果是由 React 引发的事件处理（比如：onClick 引发的事件处理），调用 setState 不会同步更新 `this.state`，除此之外的 setState 调用会同步执行 `this.setState`。** “除此之外”指的是：绕过 React 通过 addEventListener 直接添加的事件处理函数和 `setTimeout/setInterval` 产生的异步调用。
 
-### 与生命周期函数的关系
-
-![setState在生命周期中的调用](../Screenshots/setState_2.jpg)
-
-- 如果我们在 `componentWillMount` 中执行 `setState` 方法，会发生什么呢？ 组件会更新 state，但组件只渲染一次。因此，这是无意义的执行，初始化时的 state 都可以放在 `this.state`。
-- 如果我们在 `componentDidMount` 中执行 `setState` 方法，又会发生什么呢？ 组件当然会再次更新，不过在初始化过程就渲染了两次组件，这并不是一件好事。但实际情况是，有一些场景不得不需要 `setState`，比如计算组件的位置或宽高时，就不得不让组件先渲染，更新必要的信息后，再次渲染。
-- 如果我们在 `componentWillUnmount` 中执行 `setState` 方法，又会发生什么呢？ 不会触发 re-render 的，这是因为所有更新队列和更新状态都被重置为 `null`，并清除了公共类，完成了组件卸载操作
-- setState 循环调用风险
-
-### 实现流程简述
-
-React v16-
+### 实现流程
 
 setState流程还是很复杂的，设计也很精巧，避免了重复无谓的刷新组件。它的主要流程如下
 
@@ -279,6 +347,10 @@ setState流程还是很复杂的，设计也很精巧，避免了重复无谓的
    - 运行：执行setSate时传入的callback方法，一般不会传callback参数
    - 结束：更新isBatchingUpdates为false，并执行FLUSH_BATCHED_UPDATES这个wrapper中的close方法
 5. FLUSH_BATCHED_UPDATES在close阶段，会循环遍历所有的dirtyComponents，调用updateComponent刷新组件，并执行它的pendingCallbacks, 也就是setState中设置的callback。
+
+
+
+
 
 ### 总结
 
