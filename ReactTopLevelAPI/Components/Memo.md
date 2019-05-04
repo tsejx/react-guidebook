@@ -2,7 +2,7 @@
 
 ✨ React v16.6.0 新增 memo 新特性 [🇨🇳中文文档](https://reactjs.org/docs/react-api.html#reactmemo)
 
-`React.memo` 是一个高阶组件，类似于 `React.PureComponent`，不同的是 `React.memo` 适用于 `functional` 组件，而 `React.PureComponent` 适用于 `class` 组件。
+Class Component 可以通过继承类 `PureComponent` 或者实现 `shouldComponentUpdate` 来主动判断组件是否需要重新渲染，以此来提高性能，但是 Functional Component 到目前为止没有类似的功能。
 
 这种方式依然是一种对象的浅比较，有复杂对象时无法重新渲染。
 
