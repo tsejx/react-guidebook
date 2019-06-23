@@ -1,4 +1,4 @@
-## 事件处理
+# 事件处理
 
 React 基于 Virtual DOM 实现了一个 SyntheticEvent（合成事件）层，我们所定义的事件处理器会接收到一个 SyntheticEvent 对象的实例。所有事件都会自动绑定到最外层上。如果需要访问原生事件对象，可以使用 `nativeEvent` 属性。
 
