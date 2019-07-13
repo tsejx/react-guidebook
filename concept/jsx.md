@@ -1,6 +1,8 @@
 # JSX 语法
 
-**JSX 的官方定义是类 XML 语法的 ECMAscript 扩展**，完美地利用了 JavaScript 自带的语法和特性，并使用大家熟悉的 HTML 语法来创建虚拟元素。由于 JSX 这种声明式语法实际是在构建一个抽象的视图层，本身没有定义任何语义，这种抽象不会被引擎或浏览器执行，需要通过不同适配器（编译器、处理器）适配（编译为标准的 ECMAScript）到各种显示终端。
+> JSX = JavaScript XML
+
+**JSX 的官方定义是类 XML 语法的 ECMAScript 扩展**，完美地利用了 JavaScript 自带的语法和特性，并使用大家熟悉的 HTML 语法来创建虚拟元素。由于 JSX 这种声明式语法实际是在构建一个抽象的视图层，本身没有定义任何语义，这种抽象不会被引擎或浏览器执行，需要通过不同适配器（编译器、处理器）适配（编译为标准的 ECMAScript）到各种显示终端。
 
 React 引入 JSX 主要是为了方便 View 层组件化，承载了构建 HTML 结构化页面的职责。这一点与其他很多的 JavaScript 模板语言异曲同工，不过 React 将 JSX 映射为虚拟元素，并且通过创建与更新虚拟元素来管理整个 Virtual DOM 系统。
 
@@ -44,7 +46,7 @@ React 引入 JSX 主要是为了方便 View 层组件化，承载了构建 HTML 
 
 `React.createElement` 会构建一个 JavaScript 对象来描述你 HTML 结构的信息，包括标签名、属性、还有子元素等。
 
-![JSX](../Screenshots/JSX.png)
+![JSX](../snapshots/JSX.png)
 
 ## 基本语法
 
@@ -108,13 +110,13 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 
 ### 元素属性
 
-组件元素的属性是完全自定义的属性，也可以理解为实现组件所需要的参数。 
+组件元素的属性是完全自定义的属性，也可以理解为实现组件所需要的参数。
 
 在 React 中，所有的 DOM 特性和属性（包括事件处理函数）都是**小驼峰命名法**命名。
 
 #### 布尔属性
 
-省略 Boolean 属性值会导致 JSX 认为布尔值设为了 `true`。要传 `false` 时，必须使用属性表达式。这常用于表单元素中，比如 `disabled`、`required`、`checked` 和 `readOnly` 等。 
+省略 Boolean 属性值会导致 JSX 认为布尔值设为了 `true`。要传 `false` 时，必须使用属性表达式。这常用于表单元素中，比如 `disabled`、`required`、`checked` 和 `readOnly` 等。
 
 ```jsx
 // BAD
@@ -204,28 +206,28 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 
 ```jsx
 render(){
-    
+
    const containerCls = 'container';
-    
+
    return (
        <div className={containerCls}>
            <div onClick={this.onStateChange}></div>
        </div>
-   ) 
+   )
 }
 
 ```
 
 #### 字符串转义
 
-React 会将所有要显示到 DOM 的字符串转义，防止 XSS。所以，如果 JSX 中含有转义后的实体字符，比如 `&copy;`（©），则最后 DOM 中不会正确显示，因为 React 自动把 `&copy;` 中的特殊字符转义了。 
+React 会将所有要显示到 DOM 的字符串转义，防止 XSS。所以，如果 JSX 中含有转义后的实体字符，比如 `&copy;`（©），则最后 DOM 中不会正确显示，因为 React 自动把 `&copy;` 中的特殊字符转义了。
 
 有几种解决方案：
 
-* 直接使用 UTF-8 字符 
-* 使用对应字符的 Unicode 编码查询编码 
+* 直接使用 UTF-8 字符
+* 使用对应字符的 Unicode 编码查询编码
 * 使用数组组装 `<div>{['cc ', <span>&copy;</span>, ' 2015']}</div>`
-* 直接插入原始的 HTML  
+* 直接插入原始的 HTML
 
 此外，React 提供了 `dangerouslySetInnerHTML` 属性。正如其名，它的作用就是避免 React 转义字符，在确定必要的情况下可以使用它。
 

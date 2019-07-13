@@ -1,8 +1,8 @@
-## ReactDOM
+# ReactDOM
 
 React 的声明式渲染机制把复杂的 DOM 操作抽象为简单的 State 和 Props 的操作，因此避免了很多直接的 DOM 操作。不过，仍然有一些 DOM 操作是 React 无法避免或者正在努力避免的。
 
-### 官方文档
+## 官方文档
 
 [ReactDOM](https://reactjs.org/docs/react-dom.html)
 
@@ -10,7 +10,7 @@ React 的声明式渲染机制把复杂的 DOM 操作抽象为简单的 State �
 
 [DOM Elements](https://reactjs.org/docs/dom-elements.html)
 
-### ReactDOM API
+## ReactDOM API
 
 * `ReactDOM.render(element, container [, callback])` 顶层组件用于将 VirtualDOM 渲染到浏览器的 DOM 中
 * `ReactDOM.findDOMNode(component)` 获取当前组件的 DOM 元素节点引用
@@ -18,7 +18,7 @@ React 的声明式渲染机制把复杂的 DOM 操作抽象为简单的 State �
 * hydrate
 * `ReactDOM.createPortal(child, container)` 
 
-### render
+## render
 
 * 控制你传进来的容器节点里的内容。第一次被调用时，内部所有已经存在的 DOM 元素都会被替换掉。之后的调用会使用 React 的 DOM 比较算法进行高效的更新。
 * 不会修改容器节点（只修改容器的子项）。你可以在不覆盖已有子节点的情况下添加一个组件到已有的 DOM 节点中去。
