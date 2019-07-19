@@ -1,4 +1,4 @@
-## React.isValidElement 有效元素判断
+# React.isValidElement
 
 React 提供了`isValidElement()` 方法，用于判断传入对象是否是有效的 `ReactElement`。
 

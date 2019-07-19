@@ -1,21 +1,19 @@
 # JSX 语法
 
-> JSX = JavaScript XML
+**JSX 的官方定义是类 XML 语法的 ECMAScript 扩展**，完美地利用了 JavaScript 自带的语法和特性，并使用大家熟悉的 HTML 语法来创建虚拟元素。由于 JSX 这种声明式语法实际是在构建一个<b style="color: red">抽象的视图层</b>，本身没有定义任何语义，这种抽象不会被引擎或浏览器执行，需要通过不同适配器（编译器、处理器）适配（编译为标准的 ECMAScript）到各种显示终端。
 
-**JSX 的官方定义是类 XML 语法的 ECMAScript 扩展**，完美地利用了 JavaScript 自带的语法和特性，并使用大家熟悉的 HTML 语法来创建虚拟元素。由于 JSX 这种声明式语法实际是在构建一个抽象的视图层，本身没有定义任何语义，这种抽象不会被引擎或浏览器执行，需要通过不同适配器（编译器、处理器）适配（编译为标准的 ECMAScript）到各种显示终端。
-
-React 引入 JSX 主要是为了方便 View 层组件化，承载了构建 HTML 结构化页面的职责。这一点与其他很多的 JavaScript 模板语言异曲同工，不过 React 将 JSX 映射为虚拟元素，并且通过创建与更新虚拟元素来管理整个 Virtual DOM 系统。
+React 引入 JSX 主要是为了 **方便 View 层组件化**，承载了构建 HTML 结构化页面的职责。这一点与其他很多的 JavaScript 模板语言异曲同工，不过 React 将 JSX 映射为虚拟元素，并且通过创建与更新虚拟元素来管理整个 Virtual DOM 系统。
 
 > 本质上来说，JSX 只是为 `React.createElement(component, props, ...children)` 提供的一种语法糖。
 
 ## 原理
 
-每个 DOM 元素的结构都可以用 JavaScript 的对象来表示。你会发现一个 DOM 元素包含的信息其实只有三个：标签名、属性和子元素。
+每个 DOM 元素的结构都可以用 JavaScript 的对象来表示。你会发现一个 DOM 元素包含的信息其实只有三个：**标签名**、**属性**和**子元素**。
 
 ```html
-<div class='box' id='content'>
-    <div class='title'>Hello</div>
-    <button>Click</button>
+<div class="box" id="content">
+  <div class="title">Hello</div>
+  <button>Click</button>
 </div>
 ```
 
@@ -50,35 +48,35 @@ React 引入 JSX 主要是为了方便 View 层组件化，承载了构建 HTML 
 
 ## 基本语法
 
-🔍 React 和 HTML DOM属性的区别 [传送门](http://react.yubolun.com/docs/introducing-jsx.html)
+🔍 React 和 HTML DOM 属性的区别 [传送门](http://react.yubolun.com/docs/introducing-jsx.html)
 
-* [语法原则](#语法原则)
-* [元素类型](#元素类型)
-* [元素属性](#元素属性)
-  * [布尔属性](#布尔属性)
-  * [特殊属性](#特殊属性)
-  * [自定义属性](#自定义属性)
-  * [属性表达式](#属性表达式)
-  * [字符串转义](#字符串转义)
+- [语法原则](#语法原则)
+- [元素类型](#元素类型)
+- [元素属性](#元素属性)
+  - [布尔属性](#布尔属性)
+  - [特殊属性](#特殊属性)
+  - [自定义属性](#自定义属性)
+  - [属性表达式](#属性表达式)
+  - [字符串转义](#字符串转义)
 
 ### 语法原则
 
 📌 **使用守则：必须要在 JSX 声明的文件中引入 React**
 
 ```jsx
-import React from 'react'
+import React from 'react';
 
-const myButton = <MyButton color="blue" shadow={2}>Click Me</MyButton>
+const myButton = (
+  <MyButton color="blue" shadow={2}>
+    Click Me
+  </MyButton>
+);
 ```
 
 上述代码会被编译成：
 
 ```js
-React.createElement(
-    MyButton,
-    {color: 'blue', shadow: 2},
-    'Click Me'
-)
+React.createElement(MyButton, { color: 'blue', shadow: 2 }, 'Click Me');
 ```
 
 **⚠️ 注意事项：**
@@ -130,8 +128,8 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 
 **checked**
 
-* 受控组件：`checked`
-* 非受控组件：`defaultChecked`
+- 受控组件：`checked`
+- 非受控组件：`defaultChecked`
 
 ```jsx
 // 已选中
@@ -146,7 +144,7 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 为常规 DOM 节点和 SVG 元素指定 CSS 类。
 
 ```jsx
-<div className='foo'></div>
+<div className="foo" />
 ```
 
 **dangerouslySetInnerHTML**
@@ -154,7 +152,7 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 用于替换浏览器 DOM 中 `innerHTML` 接口的一个函数。由于容易把用户信息暴露给跨站脚本攻击，因此使用该函数是非常危险的。
 
 ```jsx
-<div dangerouslySetInnerHTML={{__html: '&#10003'}}></div>
+<div dangerouslySetInnerHTML={{ __html: '&#10003' }} />
 ```
 
 **htmlFor**
@@ -163,8 +161,8 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 
 ```jsx
 <form>
-    <label htmlFor='male'></label>
-    <input type='radio' name='sex' id='male'></input>
+  <label htmlFor="male" />
+  <input type="radio" name="sex" id="male" />
 </form>
 ```
 
@@ -182,22 +180,22 @@ JSX 还可以通过命名空间的方式使用 React 组件元素，以解决组
 <div d="xxx">content</div>
 ```
 
-📍如果要使用 HTML 自定义属性，要使用 `data-` 前缀，这与 HTML 标准也是一致 。
+📍 如果要使用 HTML 自定义属性，要使用 `data-` 前缀，这与 HTML 标准也是一致 。
 
 ```jsx
 <div data-attr="xxx">content</div>
 ```
 
- 然而，在自定义标签中任意的属性都是被支持的。
+然而，在自定义标签中任意的属性都是被支持的。
 
 ```jsx
 <x-my-component custom-attr="foo" />
 ```
 
-📍以 `aria-` 开头的网络无障碍属性同样可以正常使用。
+📍 以 `aria-` 开头的网络无障碍属性同样可以正常使用。
 
 ```jsx
-<div aria-hidden={true}></div>
+<div aria-hidden={true} />
 ```
 
 #### 属性表达式
@@ -224,15 +222,15 @@ React 会将所有要显示到 DOM 的字符串转义，防止 XSS。所以，�
 
 有几种解决方案：
 
-* 直接使用 UTF-8 字符
-* 使用对应字符的 Unicode 编码查询编码
-* 使用数组组装 `<div>{['cc ', <span>&copy;</span>, ' 2015']}</div>`
-* 直接插入原始的 HTML
+- 直接使用 UTF-8 字符
+- 使用对应字符的 Unicode 编码查询编码
+- 使用数组组装 `<div>{['cc ', <span>&copy;</span>, ' 2015']}</div>`
+- 直接插入原始的 HTML
 
 此外，React 提供了 `dangerouslySetInnerHTML` 属性。正如其名，它的作用就是避免 React 转义字符，在确定必要的情况下可以使用它。
 
 ```jsx
-<div dangerouslySetInnerHTML={{__html: 'cc &copy; 2015'}} />
+<div dangerouslySetInnerHTML={{ __html: 'cc &copy; 2015' }} />
 ```
 
 ### 安全性
@@ -255,7 +253,7 @@ const element = <h1>{title}</h1>;
 
 ```jsx
 function createMarkup() {
-  return {__html: 'First &middot; Second'};
+  return { __html: 'First &middot; Second' };
 }
 
 function MyComponent() {
@@ -265,8 +263,7 @@ function MyComponent() {
 
 ---
 
-深入研究：
+**参考资料：**
 
-- [ React官方文档：JSX简介(英文版)](https://facebook.github.io/jsx/)
-
-- [React官方文档：深入 JSX(英文版)](https://reactjs.org/docs/jsx-in-depth.html)
+- [React 官方文档：JSX 简介(英文版)](https://facebook.github.io/jsx/)
+- [React 官方文档：深入 JSX(英文版)](https://reactjs.org/docs/jsx-in-depth.html)

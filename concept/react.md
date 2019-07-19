@@ -2,15 +2,15 @@
 
 React 的三大特性：
 
-* 数据驱动 => 单向数据流
-* 函数式编程 => 组件化 + JSX
-* 虚拟 DOM => 跨平台
+- 数据驱动 => 单向数据流
+- 函数式编程 => 组件化 + JSX
+- 虚拟 DOM => 跨平台
 
 ## 数据
 
 ### 数据驱动
 
-在 React 中，一切皆数据。要想改变界面元素，或者更改 DOM 节点，只需要修改数据就好了。
+在 React 中，一切皆数据。要想改变界面元素，或者更改 DOM 节点，只需修改数据即可。
 
 > 切记：在 React 中不要操作 DOM 节点
 
@@ -53,26 +53,26 @@ Math.random();
 把数据组织起来的表现形式。
 
 ```js
-() => ('My Component');
+() => 'My Component';
 ```
 
 ### JSX 语法
 
 在 JavaScript 中可以编辑 HTML 片段。
 
-```
-  () => <div>我也是一个组件</div>
+```jsx
+() => <div>我也是一个组件</div>
 ```
 
 ### 客户端和服务端渲染
 
 把代码拉取到客户端，再编译执行的方式就是客户端渲染。这种方式是无法支持 SEO 的，所有就有了服务端渲然，在服务端提前渲然成静态 HTML 页面。
 
-第三方服务端渲然库：[next.js](https://nextjs.org/docs)
+第三方服务端渲染库：[Next.js](https://nextjs.org/docs)
 
 ## 性能
 
-每次数据更新后，重新计算 Virtual DOM，并和上一次生成的 Virtual DOM 做对比，对发生变化的部分做**批量更新**。React 也提供了直观的 **shouldComponentUpdate** 生命周期回调，来减少数据变化后不必要的 Virtual DOM 对比过程，以保证性能。 
+每次数据更新后，重新计算 Virtual DOM，并和上一次生成的 Virtual DOM 做对比，对发生变化的部分做**批量更新**。React 也提供了直观的 **shouldComponentUpdate** 生命周期回调函数，来减少数据变化后不必要的 Virtual DOM 对比过程，以保证性能。
 
 ### Virtual DOM 虚拟节点
 
@@ -83,15 +83,14 @@ Math.random();
 ```js
 const element = {
   element: 'ul',
-  props: { id: "ulist" },
+  props: { id: 'ulist' },
   children: [
-    { element: 'li', props: { id:"first" }, children: ['这是第一个List元素'] },
-    { element: 'li', props: { id:"second" }, children: ['这是第二个List元素'] }
-  ]
-}
+    { element: 'li', props: { id: 'first' }, children: ['这是第一个List元素'] },
+    { element: 'li', props: { id: 'second' }, children: ['这是第二个List元素'] },
+  ],
+};
 ```
 
 ### Diff 算法
 
 将虚拟 DOM 转化为真实 DOM 的算法。分为三级：Tree Diff、Component Diff、Element Diff。
-

@@ -1,4 +1,4 @@
-## React.PureComponent
+# React.PureComponent
 
 在 React Component 的生命周期中，有一个 `shouldComponentUpdate` 方法。这个方法默认返回值是 `true`。
 
@@ -12,7 +12,7 @@ PureComponent 与 Component 的不同在于，PureComponent 内部会基于 Prop
 * 虽然第一层数据没变，但引用变了，就会造成虚拟 DOM 计算的浪费 [🌐性能问题](#性能问题)
 * 第一层数据改变，但引用没变，会造成不渲染，所以需要很小心地操作数据
 
-### 原理
+## 原理
 
 当组件更新时，如果组件的 Props 和 State 都没发生改变， Render 方法就不会触发，省去 Virtual DOM 的生成和比对过程，达到提升性能的目的。
 
@@ -27,13 +27,13 @@ if (this._compositeType === CompositeTypes.PureClass) {
 
 而 `shallowEqual` 又做了什么呢？会比较 `Object.keys(state | props)` 的长度是否一致，每一个 `key` 是否两者都有，并且是否是一个引用，也就是只比较了第一层的值，确实很浅，所以深层的嵌套数据是对比不出来的。
 
-### 使用指南
+## 使用指南
 
 Props 和 State 中的原始类型的值的比较是比较合理的，而引用类型的值则是需要注意的。
 
 继承 PureComponent 时，进行的是浅比较，也就是说，如果是引用类型的数据，只会比较是不是同一个地址，而不会比较具体这个地址存的数据是否完全一致。
 
-#### 易变数据不能使用同一引用
+### 易变数据不能使用同一引用
 
 由于 `shouldCompoenntUpdate` 前后 Props 和 State 只进行浅比较，也就是引用比较，因此变更数组或对象类型数据需要在原来数据基础上重新建立新的数组引用或对象引用。
 
@@ -68,7 +68,7 @@ class App extends PureComponent {
 }
 ```
 
-#### 内联函数
+### 内联函数
 
 函数也经常作为 Props 传递，由于每次需要为内联函数创建一个新的实例，所以每次函数都会指向不同的内存地址。
 
@@ -104,7 +104,7 @@ render() {
 }
 ```
 
-#### 内置生命周期函数冲突
+### 内置生命周期函数冲突
 
 继承 PureComponent 时，不能再重写 `shouldComponentUpdate`，否则会引发警告。
 
@@ -124,7 +124,7 @@ if (inst.shouldComponentUpdate) {
 }
 ```
 
-#### 老版本兼容写法
+### 老版本兼容写法
 
 ```jsx
 import React { PureComponent, Component } from 'react';
@@ -134,7 +134,7 @@ class Foo extends (PureComponent || Component) {
 }
 ```
 
-#### 性能问题
+### 性能问题
 
 比较原始值和对象引用是低耗时操作。如果你有一列子对象并且其中一个子对象更新，对它们的 Props 和 State 进行检查要比重新渲染每一个子节点要快的多。
 

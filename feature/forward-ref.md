@@ -1,17 +1,17 @@
-## React.forwardRef
+# React.forwardRef
 
 ✨ 适用于 React v16.3+
 
-**`React.forwardRef` 用于将父组件创建的 `ref` 引用关联到子组件中的任意元素上。**
+`React.forwardRef` 用于将父组件创建的 `ref` 引用关联到子组件中的任意元素上。
 
 也可以理解为子组件向父组件暴露 DOM 引用。
 
-### 使用场景
+## 使用场景
 
 * 传递 `Refs` 到 DOM 组件
 * 传递 `Refs` 到高阶组件
 
-### 使用指南
+## 使用方法
 
 通过一个示例说明 `React.forwardRef()` 的使用方法。
 
