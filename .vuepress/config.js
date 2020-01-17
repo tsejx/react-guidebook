@@ -1,5 +1,5 @@
 const generateSidebar = require('./generateSidebar');
-const name = 'React-Guidebook';
+const name = 'react-guidebook';
 
 const setPrefix = (base, route) => `${base}/${route}`;
 
@@ -97,7 +97,7 @@ module.exports = {
 
   vueThemes: {
     links: {
-      github: 'https://github.com/tsejx/React-Guidebook',
+      github: 'https://github.com/tsejx/react-guidebook',
     },
   },
 };
