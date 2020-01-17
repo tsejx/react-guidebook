@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>setState | React-Guidebook</title>
+    <meta name="description" content="">
+    <link rel="icon" href="favicon.ico">
+    
+    <link rel="preload" href="/react-guidebook/assets/css/0.styles.e28a9572.css" as="style"><link rel="preload" href="/react-guidebook/assets/js/app.260c1e95.js" as="script"><link rel="preload" href="/react-guidebook/assets/js/2.faf5b053.js" as="script"><link rel="preload" href="/react-guidebook/assets/js/54.790296ee.js" as="script"><link rel="prefetch" href="/react-guidebook/assets/js/10.12b8a1f6.js"><link rel="prefetch" href="/react-guidebook/assets/js/11.08027518.js"><link rel="prefetch" href="/react-guidebook/assets/js/12.96017118.js"><link rel="prefetch" href="/react-guidebook/assets/js/13.843c2301.js"><link rel="prefetch" href="/react-guidebook/assets/js/14.350d4ea6.js"><link rel="prefetch" href="/react-guidebook/assets/js/15.922c628d.js"><link rel="prefetch" href="/react-guidebook/assets/js/16.179de27c.js"><link rel="prefetch" href="/react-guidebook/assets/js/17.d6f21d06.js"><link rel="prefetch" href="/react-guidebook/assets/js/18.3b94c7d4.js"><link rel="prefetch" href="/react-guidebook/assets/js/19.9d272f30.js"><link rel="prefetch" href="/react-guidebook/assets/js/20.5719f794.js"><link rel="prefetch" href="/react-guidebook/assets/js/21.32a481df.js"><link rel="prefetch" href="/react-guidebook/assets/js/22.a8130aca.js"><link rel="prefetch" href="/react-guidebook/assets/js/23.04c27a3a.js"><link rel="prefetch" href="/react-guidebook/assets/js/24.bc3baace.js"><link rel="prefetch" href="/react-guidebook/assets/js/25.e2bf72b2.js"><link rel="prefetch" href="/react-guidebook/assets/js/26.e2f5f647.js"><link rel="prefetch" href="/react-guidebook/assets/js/27.12c8dd66.js"><link rel="prefetch" href="/react-guidebook/assets/js/28.786c50e6.js"><link rel="prefetch" href="/react-guidebook/assets/js/29.bdb196e1.js"><link rel="prefetch" href="/react-guidebook/assets/js/3.28696f6a.js"><link rel="prefetch" href="/react-guidebook/assets/js/30.cf0e07b4.js"><link rel="prefetch" href="/react-guidebook/assets/js/31.6dad3ae2.js"><link rel="prefetch" href="/react-guidebook/assets/js/32.bd3b8924.js"><link rel="prefetch" href="/react-guidebook/assets/js/33.c7028e61.js"><link rel="prefetch" href="/react-guidebook/assets/js/34.980dc58f.js"><link rel="prefetch" href="/react-guidebook/assets/js/35.b7595861.js"><link rel="prefetch" href="/react-guidebook/assets/js/36.5096dad5.js"><link rel="prefetch" href="/react-guidebook/assets/js/37.95547070.js"><link rel="prefetch" href="/react-guidebook/assets/js/38.158db71c.js"><link rel="prefetch" href="/react-guidebook/assets/js/39.533eee82.js"><link rel="prefetch" href="/react-guidebook/assets/js/4.63e5ba6d.js"><link rel="prefetch" href="/react-guidebook/assets/js/40.58cb3743.js"><link rel="prefetch" href="/react-guidebook/assets/js/41.d5b5333a.js"><link rel="prefetch" href="/react-guidebook/assets/js/42.8fd16888.js"><link rel="prefetch" href="/react-guidebook/assets/js/43.17e7ea62.js"><link rel="prefetch" href="/react-guidebook/assets/js/44.c75d55fd.js"><link rel="prefetch" href="/react-guidebook/assets/js/45.cfb8cfbd.js"><link rel="prefetch" href="/react-guidebook/assets/js/46.21fefad7.js"><link rel="prefetch" href="/react-guidebook/assets/js/47.65560a73.js"><link rel="prefetch" href="/react-guidebook/assets/js/48.b09b6aff.js"><link rel="prefetch" href="/react-guidebook/assets/js/49.17f999ca.js"><link rel="prefetch" href="/react-guidebook/assets/js/5.dd0f972b.js"><link rel="prefetch" href="/react-guidebook/assets/js/50.3c7b255a.js"><link rel="prefetch" href="/react-guidebook/assets/js/51.f1ffef2a.js"><link rel="prefetch" href="/react-guidebook/assets/js/52.8414d27e.js"><link rel="prefetch" href="/react-guidebook/assets/js/53.ee10be58.js"><link rel="prefetch" href="/react-guidebook/assets/js/55.b3491420.js"><link rel="prefetch" href="/react-guidebook/assets/js/56.ded674be.js"><link rel="prefetch" href="/react-guidebook/assets/js/57.f989e8b0.js"><link rel="prefetch" href="/react-guidebook/assets/js/58.2cc1c592.js"><link rel="prefetch" href="/react-guidebook/assets/js/6.38cc656d.js"><link rel="prefetch" href="/react-guidebook/assets/js/7.86641c97.js"><link rel="prefetch" href="/react-guidebook/assets/js/8.8391da58.js"><link rel="prefetch" href="/react-guidebook/assets/js/9.a3a45a50.js">
+    <link rel="stylesheet" href="/react-guidebook/assets/css/0.styles.e28a9572.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/react-guidebook/" class="home-link router-link-active"><img src="/react-guidebook/favicon.png" alt="React-Guidebook" class="logo"> <span class="site-name can-hide">React-Guidebook</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"> <a href="https://github.com/tsejx/React-Guidebook" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"> <a href="https://github.com/tsejx/React-Guidebook" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>基本概念</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/concept/react.html" class="sidebar-link">React 特性</a></li><li><a href="/react-guidebook/concept/jsx.html" class="sidebar-link">JSX 语法</a></li><li><a href="/react-guidebook/concept/props.html" class="sidebar-link">Props</a></li><li><a href="/react-guidebook/concept/state.html" class="sidebar-link">State</a></li><li><a href="/react-guidebook/concept/lifecycle.html" class="sidebar-link">生命周期</a></li><li><a href="/react-guidebook/concept/component.html" class="sidebar-link">组件化</a></li><li><a href="/react-guidebook/concept/react-dom.html" class="sidebar-link">ReactDOM</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>核心架构</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/core/fiber.html" class="sidebar-link">Fiber</a></li><li><a href="/react-guidebook/core/virtual-dom.html" class="sidebar-link">Virtual DOM</a></li><li><a href="/react-guidebook/core/diffing-algorithm.html" class="sidebar-link">差异化算法</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>运行机制</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/mechanism/set-state.html" class="sidebar-link">setState</a></li><li><a href="/react-guidebook/mechanism/render.html" class="sidebar-link">渲染策略</a></li><li><a href="/react-guidebook/mechanism/refs.html" class="sidebar-link">Refs</a></li><li><a href="/react-guidebook/mechanism/portals.html" class="sidebar-link">Portals</a></li><li><a href="/react-guidebook/mechanism/context.html" class="sidebar-link">Context</a></li><li><a href="/react-guidebook/mechanism/render-props.html" class="sidebar-link">Render Props</a></li><li><a href="/react-guidebook/mechanism/high-order-component.html" class="sidebar-link">高阶组件</a></li><li><a href="/react-guidebook/mechanism/handling-events.html" class="sidebar-link">事件处理</a></li><li><a href="/react-guidebook/mechanism/synthetic-event.html" class="sidebar-link">合成事件</a></li><li><a href="/react-guidebook/mechanism/hooks.html" class="sidebar-link">Hooks</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>功能扩展</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/feature/memo.html" class="sidebar-link">React.memo</a></li><li><a href="/react-guidebook/feature/pure-component.html" class="sidebar-link">React.PureComponent</a></li><li><a href="/react-guidebook/feature/fragment.html" class="sidebar-link">React.Fragment</a></li><li><a href="/react-guidebook/feature/create-ref.html" class="sidebar-link">React.createRef</a></li><li><a href="/react-guidebook/feature/forward-ref.html" class="sidebar-link">React.forwardRef</a></li><li><a href="/react-guidebook/feature/lazy.html" class="sidebar-link">React.lazy</a></li><li><a href="/react-guidebook/feature/suspense.html" class="sidebar-link">React.Suspense</a></li><li><a href="/react-guidebook/feature/clone-element.html" class="sidebar-link">React.cloneElement</a></li><li><a href="/react-guidebook/feature/is-valid-element.html" class="sidebar-link">React.isValidElement</a></li><li><a href="/react-guidebook/feature/children.html" class="sidebar-link">React.Children</a></li><li><a href="/react-guidebook/feature/force-update.html" class="sidebar-link">forceUpdate</a></li></ul></section></li><li><section class="sidebar-group depth-0"><p class="sidebar-heading"><span>生态</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><section class="sidebar-group is-sub-group depth-1"><p class="sidebar-heading open"><span>路由管理</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/ecosystem/routing/spa-routing.html" class="sidebar-link">单页面应用路由机制</a></li><li><a href="/react-guidebook/ecosystem/routing/react-router.html" class="sidebar-link">React Router</a></li></ul></section></li><li><section class="sidebar-group is-sub-group depth-1"><p class="sidebar-heading"><span>数据管理</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/ecosystem/redux/flux.html" class="sidebar-link">Flux</a></li><li><a href="/react-guidebook/ecosystem/redux/redux.html" class="sidebar-link">Redux</a></li><li><a href="/react-guidebook/ecosystem/redux/react-redux.html" class="sidebar-link">React Redux</a></li><li><a href="/react-guidebook/ecosystem/redux/redux-saga.html" class="sidebar-link">Redux Saga</a></li><li><a href="/react-guidebook/ecosystem/redux/redux-thunk.html" class="sidebar-link">Redux Thunk</a></li></ul></section></li><li><section class="sidebar-group is-sub-group depth-1"><p class="sidebar-heading"><span>类型检测</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/react-guidebook/ecosystem/type/prop-types.html" class="sidebar-link">PropTypes</a></li></ul></section></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="setstate"><a href="#setstate" aria-hidden="true" class="header-anchor">#</a> setState</h1> <ul><li><p>partialState：setState传入的第一个参数，对象或函数</p></li> <li><p>_pendingStateQueue：当前组件等待执行更新的state队列</p></li> <li><p>isBatchingUpdates：react用于标识当前是否处于批量更新状态，所有组件公用</p></li> <li><p>dirtyComponent：当前所有处于待更新状态的组件队列</p></li> <li><p>transcation：react的事务机制，在被事务调用的方法外包装n个waper对象，并一次执行：waper.init、被调用方法、waper.close</p></li> <li><p>FLUSH_BATCHED_UPDATES：用于执行更新的waper，只有一个close方法</p></li> <li><p>1.将setState传入的partialState参数存储在当前组件实例的state暂存队列中。</p></li> <li><p>2.判断当前React是否处于批量更新状态，如果是，将当前组件加入待更新的组件队列中。</p></li> <li><p>3.如果未处于批量更新状态，将批量更新状态标识设置为true，用事务再次调用前一步方法，保证当前组件加入到了待更新组件队列中。</p></li> <li><p>4.调用事务的waper方法，遍历待更新组件队列依次执行更新。</p></li> <li><p>5.执行生命周期componentWillReceiveProps。</p></li> <li><p>6.将组件的state暂存队列中的state进行合并，获得最终要更新的state对象，并将队列置为空。</p></li> <li><p>7.执行生命周期componentShouldUpdate，根据返回值判断是否要继续更新。</p></li> <li><p>8.执行生命周期componentWillUpdate。</p></li> <li><p>9.执行真正的更新，render。</p></li> <li><p>10.执行生命周期componentDidUpdate。</p></li></ul> <h1 id="三-总结"><a href="#三-总结" aria-hidden="true" class="header-anchor">#</a> 三.总结</h1> <h2 id="_1-钩子函数和合成事件中："><a href="#_1-钩子函数和合成事件中：" aria-hidden="true" class="header-anchor">#</a> 1.钩子函数和合成事件中：</h2> <p>在<code>react</code>的生命周期和合成事件中，<code>react</code>仍然处于他的更新机制中，这时<code>isBranchUpdate</code>为true。</p> <p>按照上述过程，这时无论调用多少次<code>setState</code>，都会不会执行更新，而是将要更新的<code>state</code>存入<code>_pendingStateQueue</code>，将要更新的组件存入<code>dirtyComponent</code>。</p> <p>当上一次更新机制执行完毕，以生命周期为例，所有组件，即最顶层组件<code>didmount</code>后会将<code>isBranchUpdate</code>设置为false。这时将执行之前累积的<code>setState</code>。</p> <h2 id="_2-异步函数和原生事件中"><a href="#_2-异步函数和原生事件中" aria-hidden="true" class="header-anchor">#</a> 2.异步函数和原生事件中</h2> <p>由执行机制看，<code>setState</code>本身并不是异步的，而是如果在调用<code>setState</code>时，如果<code>react</code>正处于更新过程，当前更新会被暂存，等上一次更新执行后在执行，这个过程给人一种异步的假象。</p> <p>在生命周期，根据JS的异步机制，会将异步函数先暂存，等所有同步代码执行完毕后在执行，这时上一次更新过程已经执行完毕，<code>isBranchUpdate</code>被设置为false，根据上面的流程，这时再调用<code>setState</code>即可立即执行更新，拿到更新结果。</p> <h2 id="_3-partialstate合并机制"><a href="#_3-partialstate合并机制" aria-hidden="true" class="header-anchor">#</a> 3.<code>partialState</code>合并机制</h2> <p>我们看下流程中<code>_processPendingState</code>的代码，这个函数是用来合并<code>state</code>暂存队列的，最后返回一个合并后的<code>state</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>  _processPendingState: function (props, context) {
+
+
+
+    var inst = this._instance;
+
+
+
+    var queue = this._pendingStateQueue;
+
+
+
+    var replace = this._pendingReplaceState;
+
+
+
+    this._pendingReplaceState = false;
+
+
+
+    this._pendingStateQueue = null;
+
+
+
+ 
+
+
+
+    if (!queue) {
+
+
+
+      return inst.state;
+
+
+
+    }
+
+
+
+ 
+
+
+
+    if (replace &amp;&amp; queue.length === 1) {
+
+
+
+      return queue[0];
+
+
+
+    }
+
+
+
+ 
+
+
+
+    var nextState = _assign({}, replace ? queue[0] : inst.state);
+
+
+
+    for (var i = replace ? 1 : 0; i &lt; queue.length; i++) {
+
+
+
+      var partial = queue[i];
+
+
+
+      _assign(nextState, typeof partial === 'function' ? partial.call(inst, nextState, props, context) : partial);
+
+
+
+    }
+
+
+
+ 
+
+
+
+    return nextState;
+
+
+
+  },
+
+
+
+复制代码
+</code></pre></div><p>我们只需要关注下面这段代码：</p> <div class="language- extra-class"><pre class="language-text"><code> _assign(nextState, typeof partial === 'function' ? partial.call(inst, nextState, props, context) : partial);
+
+
+
+复制代码
+</code></pre></div><p>如果传入的是对象，很明显会被合并成一次：</p> <div class="language- extra-class"><pre class="language-text"><code>Object.assign(
+
+
+
+  nextState,
+
+
+
+  {index: state.index+ 1},
+
+
+
+  {index: state.index+ 1}
+
+
+
+)
+
+
+
+复制代码
+</code></pre></div><p>如果传入的是函数，函数的参数preState是前一次合并后的结果，所以计算结果是准确的。</p> <h2 id="_4-componentdidmount调用setstate"><a href="#_4-componentdidmount调用setstate" aria-hidden="true" class="header-anchor">#</a> 4.<code>componentDidMount</code>调用<code>setstate</code></h2> <blockquote><p>在componentDidMount()中，你 可以立即调用setState()。它将会触发一次额外的渲染，但是它将在浏览器刷新屏幕之前发生。这保证了在此情况下即使render()将会调用两次，用户也不会看到中间状态。谨慎使用这一模式，因为它常导致性能问题。在大多数情况下，你可以 在constructor()中使用赋值初始状态来代替。然而，有些情况下必须这样，比如像模态框和工具提示框。这时，你需要先测量这些DOM节点，才能渲染依赖尺寸或者位置的某些东西。</p></blockquote> <p>以上是官方文档的说明，不推荐直接在<code>componentDidMount</code>直接调用<code>setState</code>，由上面的分析：<code>componentDidMount</code>本身处于一次更新中，我们又调用了一次<code>setState</code>，就会在未来再进行一次<code>render</code>，造成不必要的性能浪费，大多数情况可以设置初始值来搞定。</p> <p>当然在<code>componentDidMount</code>我们可以调用接口，再回调中去修改<code>state</code>，这是正确的做法。</p> <p>当state初始值依赖dom属性时，在<code>componentDidMount</code>中<code>setState</code>是无法避免的。</p> <h2 id="_5-componentwillupdate-componentdidupdate"><a href="#_5-componentwillupdate-componentdidupdate" aria-hidden="true" class="header-anchor">#</a> 5.<code>componentWillUpdate</code> <code>componentDidUpdate</code></h2> <p>这两个生命周期中不能调用<code>setState</code>。</p> <p>由上面的流程图很容易发现，在它们里面调用<code>setState</code>会造成死循环，导致程序崩溃。</p> <h2 id="_6-推荐使用方式"><a href="#_6-推荐使用方式" aria-hidden="true" class="header-anchor">#</a> 6.推荐使用方式</h2> <p>在调用<code>setState</code>时使用函数传递<code>state</code>值，在回调函数中获取最新更新后的<code>state</code>。</p></div> <footer class="page-edit"><!----> <!----></footer> <!----> </main></div><div class="global-ui"></div></div>
+    <script src="/react-guidebook/assets/js/app.260c1e95.js" defer></script><script src="/react-guidebook/assets/js/2.faf5b053.js" defer></script><script src="/react-guidebook/assets/js/54.790296ee.js" defer></script>
+  </body>
+</html>
