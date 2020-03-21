@@ -2,3 +2,6 @@
 .idea
 node_modules
 todo
+.umi
+dist/
+.umi-production/
