@@ -1,4 +1,5 @@
 export default {
+  hash: true,
   mode: 'site',
   title: 'React Guidebook',
   description: 'React 完全知识体系',
@@ -6,6 +7,7 @@ export default {
   base: '/react-guidebook/',
   logo: '/favicon.png',
   favicon: './favicon.ico',
+  exportStatic: {},
   theme: {
     '@primary-color': '#00A7D6',
   },

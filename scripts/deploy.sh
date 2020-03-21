@@ -1,17 +1,25 @@
 #!/usr/bin/env sh
-
 set -e
-yarn run build
-cd .vuepress/dist
+shopt -s extglob
 
-# 如果是发布到自定义域名
-# echo 'www.example.com' > CNAME
+TEMP_PATH="docs/.temp"
 
+# build docs
+npm run build
+
+# prepare deploy
+rm -rf $TEMP_PATH
+mkdir $TEMP_PATH
+cd $TEMP_PATH
 git init
-git add -A
-git commit -m 'deploy'
+git pull git@github.com:tsejx/react-guidebook.git gh-pages
+cp -r ../../dist/* .
 
-# 如果发布到 https://<USERNAME>.github.io/<REPO>
+# commit and push changes
+git add -A
+git commit --am -m "build: deploy documentation"
 git push -f git@github.com:tsejx/react-guidebook.git master:gh-pages
 
-cd -
+## clean
+cd
+rm -rf $TEMP_PATH
