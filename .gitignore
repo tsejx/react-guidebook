@@ -5,3 +5,4 @@ todo
 .umi
 dist/
 .umi-production/
+.temp/
