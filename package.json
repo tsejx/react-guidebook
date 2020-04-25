@@ -8,8 +8,7 @@
     "build": "yarn run dumi build",
     "deploy": "bash ./scripts/deploy.sh",
     "lint:md": "lint-md *.md",
-    "lint:fix": "lint-md *.md --fix",
-    "commit": "git-cz"
+    "lint:fix": "lint-md *.md --fix"
   },
   "repository": {
     "type": "git",
@@ -23,12 +22,9 @@
   ],
   "author": "tsejx",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/tsejx/React-GuideBook/issues"
-  },
   "homepage": "https://github.com/tsejx/React-GuideBook#readme",
   "devDependencies": {
-    "dumi": "^1.0.8",
+    "dumi": "^1.0.20",
     "lint-md": "^0.1.1"
   }
 }
