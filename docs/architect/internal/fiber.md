@@ -67,7 +67,7 @@ export default () => <img alt="Life of a Frame" src={img} width={800} />;
 
 合作式调度主要就是用来分配任务的，当有更新任务来的时候，不会马上去做 Diff 操作，而是先把当前的更新送入一个 **Update Queue** 中，然后交给 **Scheduler** 去处理，Scheduler 会根据当前主线程的使用情况去处理这次 Update。为了实现这种特性，使用 `requestIdleCallback` API。对于不支持这个 API 的浏览器，React 会加上 pollyfill。
 
-在上面我们已经直到浏览器是一帧一帧执行的，在两个执行帧之间，主线程通常会有一小段空闲时间，`requestIdleCallback` 可以在这个 **空闲期（Idle Period）调用空闲期回调（Idle Callback）**，执行一些任务。
+在上面我们已经知道浏览器是一帧一帧执行的，在两个执行帧之间，主线程通常会有一小段空闲时间，`requestIdleCallback` 可以在这个 **空闲期（Idle Period）调用空闲期回调（Idle Callback）**，执行一些任务。
 
 ```jsx | inline
 import React from 'react';
@@ -464,8 +464,51 @@ while (+new Date < now + timespent);
 如果搞事情（对应 React 中的生命周期函数等时间上不受 React 控制的东西）就花了 300ms，什么机制也保证不了流畅。
 
 > ⚠️ **注意：**一般剩余可用时间也就 10-50ms，可调度空间不算很宽裕。
->
-> 早期的 React 版本在实现上使用的是 `requestIdleCallback` API，但使用 `requestIdleCallback` 实际上有一些限制，执行频次不足，以致于无法实现流畅的 UI 渲染，扩展性差。因此 React 团队放弃了 `requestIdleCallback` 用法，实现了自定义的版本。比如，在发布 v16.10 版本中，推出实验性的 Scheduler，尝试使用 `postMessage` 来代替 `requestAnimationFrame`。更多了解可以查看 React 源码 packages/scheduler 部分。
+
+这个函数的兼容性并不是很好，并且它还有一个致命的缺陷：
+
+> requestIdleCallback is called only 20 times per second - Chrome on my 6x2 core Linux machine, it's not really useful for UI work.
+
+也就是说 requestIdleCallback 只能一秒调用回调 20 次，这个完全满足不了现有的情况。
+
+早期的 React 版本在实现上使用的是 `requestIdleCallback` API，但使用 `requestIdleCallback` 实际上有一些限制，执行频次不足，以致于无法实现流畅的 UI 渲染，扩展性差。因此 React 团队放弃了 `requestIdleCallback` 用法，实现了自定义的版本。比如，在发布 v16.10 版本中，推出实验性的 Scheduler，尝试使用 MessageChannel API 和 `requestAnimationFrame` 实现 `requestIdleCallback`。更多了解可以查看 React 源码 `packages/scheduler` 部分。
+
+- 所以目前 React 利用 MessageChannel 模拟了 `requestIdleCallback`，将回调延迟到绘制操作之后执行
+- MessageChannel API 允许我们创建一个新的消息通道，并通过它的两个 MessagePort 属性发送数据
+- MessageChannel 创建了一个通信的管道，这个管道有两个端口，每个端口都可以通过 `postMessage` 发送数据，而一个端口只要绑定了 `onmessage` 回调方法，就可以接收从另一个端口传来的数据
+- MessageChannel 是一个宏任务
+
+实际使用 MessageChannel API 模拟实现：
+
+```js
+let channel = new MessageChannel();
+let activeFrameTime = 1000/60; // 16.6
+let frameDeadLine; // 这一帧的截止时间
+let pendingCallback;
+let timeRemaining = () => frameDeadLine - performance.now();
+
+channel.port2.onmessage = function() {
+  let currentTime = performance.now();
+  // 如果帧的截止时间已经小于当前时间，说明已经过期了
+  let didTimeout = frameDeadLine <= currentTime;
+  if (didTimeout || timeRemaining() > 0) {
+    if (pendingCallback) {
+      pendingCallback({ didTimeout, timeRemaining })
+    }
+  }
+}
+
+window.requestIdleCallback = (callback, options) => {
+  requestAnimationFrame((rafTime) => {
+    console.log('rafTime', rafTime)
+    // 每帧开始时间加上 16.6 就是这一帧的截止时间
+    frameDeadLine = rafTime + activeFrameTime;
+    pendingCallback = callback;
+    // 其实发消息之后，相当于添加了一个宏任务
+    channel.port1.postMessage('Hello')
+  })
+}
+```
 
 ### Reconciler - commit 阶段
 
@@ -564,6 +607,7 @@ React Fiber 最终提供的关键特性主要是：
   - [📝 React Fiber 那些事：深入解析新的协调算法（2018-12-03 推荐）](https://juejin.im/post/5c052f95e51d4523d51c8300)
   - [📝 React Fiber 源码解析（2020-08-11 推荐）](https://juejin.im/post/6859528127010471949)
   - [📝 这可能是最通俗的 React Fiber 打开方式（2019-10-22 推荐）](https://juejin.im/post/6844903975112671239)
+  - [📝 剖析 React 源码：调度原理](https://github.com/KieSun/Dream/issues/21)
 - **优质好文**
   - [📝 React Fiber 初探（2017-12-02）](https://juejin.im/post/6844903518357159949)
   - [📝 完全理解 React Fiber（2018-01-06）](http://www.ayqy.net/blog/dive-into-react-fiber/)

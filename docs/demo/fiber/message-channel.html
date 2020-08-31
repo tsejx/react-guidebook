@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MessageChannel</title>
+</head>
+
+<body>
+  <script>
+    let channel = new MessageChannel();
+    let port1 = channel.port1;
+    let port2 = channel.port2;
+
+    port1.onmessage = function (event) {
+      console.log('port1 收到来自 port2 的数据', event.data);
+    }
+
+    port2.onmessage = function (event) {
+      console.log('port2 收到来自 port1 的数据', event.data)
+    }
+
+    port1.postMessage('发送给 port2');
+    port2.postMessage('发送给 port1');
+  </script>
+
+</body>
+
+</html>

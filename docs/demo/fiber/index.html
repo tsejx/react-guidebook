@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiber</title>
+</head>
+
+<body>
+  <script>
+    function sleep(duration) {
+      let start = Date.now();
+
+      while (start + duration > Date.now()) {
+
+      }
+
+      // 2000 之后
+    }
+
+    function progress() {
+      console.log('Progrese')
+      requestAnimationFrame(progress);
+    }
+
+    // requestAnimationFrame(progress)
+
+    let channel = new MessageChannel();
+    let activeFrameTime = 1000/60; // 16.6
+    let frameDeadLine; // 这一帧的截止时间
+    let pendingCallback;
+    let timeRemaining = () => frameDeadLine - performance.now();
+    channel.port2.onmessage = function() {
+      let currentTime = performance.now();
+      // 如果帧的截止时间已经小于当前时间，说明已经过期了
+      let didTimeout = frameDeadLine <= currentTime;
+      if (didTimeout || timeRemaining() > 0) {
+        if (pendingCallback) {
+          pendingCallback({ didTimeout, timeRemaining })
+        }
+      }
+    }
+    window.requestIdleCallback = (callback, options) => {
+      requestAnimationFrame((rafTime) => {
+        console.log('rafTime', rafTime)
+        // 每帧开始时间加上 16.6 就是这一帧的截止时间
+        frameDeadLine = rafTime + activeFrameTime;
+        pendingCallback = callback;
+        // 其实发消息之后，相当于添加了一个宏任务
+        channel.port1.postMessage('Hello')
+      })
+    }
+
+    const works = [
+      () => {
+        console.log('A1 开始');
+        sleep(20);
+        console.log('A1 结束');
+      },
+      () => {
+        console.log('B1 开始');
+        sleep(20);
+        console.log('B1 结束');
+      },
+      () => {
+        console.log('C1 开始');
+        sleep(20);
+        console.log('C1 结束');
+      },
+      () => {
+        console.log('C2 开始');
+        sleep(20);
+        console.log('C2 结束');
+      },
+      () => {
+        console.log('B2 开始');
+        sleep(20);
+        console.log('B2 结束');
+      }
+    ];
+
+    // 告诉浏览器，可以在空闲的时间执行任务，但是如果已经过期了，不管你有没有空，都要帮我执行
+    requestIdleCallback(workLoop, {timeout: 1000});
+    // 执行有两种可能性
+    // 1. 浏览器很长时间都没有什么重要工作，那么 idleCallback 时间会延长，最长 50ms 每秒 20 帧
+    // 对于人来说 100ms 内响应的话，用户会感觉是流畅的
+    // 给你了 50ms，你在 50ms 内做一些事情，那么即使在这个时候浏览器发生了交互，也不会感觉卡顿
+
+    // 循环执行工具
+    function workLoop(deadline) {
+      console.log('本帧的剩余时间：', parseInt(deadline.timeRemaining()));
+      // 如果说还有剩余时间或者此任务已经过期了，并且还有没有完成的任务
+      while (deadline.timeRemaining() > 0 && works.length > 0) {
+        // 第一个任务 A1 执行就花了 20ms
+        performUnitOfWork();
+      }
+
+      if (works.length > 0) {
+        console.log(`只剩下：${deadline.timeRemaining()}，时间片已经到期了，等待下次调用`);
+        requestIdleCallback(workLoop);
+      }
+    }
+
+    function performUnitOfWork() {
+      // 取出工作数组中的第一个工作
+      let work = works.shift();
+      work();
+    }
+
+  </script>
+</body>
+
+</html>
