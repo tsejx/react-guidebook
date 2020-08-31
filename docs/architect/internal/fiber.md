@@ -59,7 +59,7 @@ export default () => <img alt="Life of a Frame" src={img} width={800} />;
 
 ### 解决方案
 
-把渲染更新过程拆分成多个子任务，每次只做一小部分，做完看是否还有生育时间，如果有继续下个任务；如果没有，挂起当前任务，将时间控制权交给主线程，等主线程不忙的时候再继续执行。这种策略叫做 [Cooperative Scheduling（合作式调度）](https://www.w3.org/TR/requestidlecallback/)，操作系统常用任务调度策略之一。
+把渲染更新过程拆分成多个子任务，每次只做一小部分，做完看是否还有剩余时间，如果有继续下个任务；如果没有，挂起当前任务，将时间控制权交给主线程，等主线程不忙的时候再继续执行。这种策略叫做 [Cooperative Scheduling（合作式调度）](https://www.w3.org/TR/requestidlecallback/)，操作系统常用任务调度策略之一。
 
 > **补充知识**
 >
