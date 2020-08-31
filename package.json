@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "yarn run dumi dev",
+    "start": "yarn run dev",
+    "dev": "yarn run dumi dev --port=8020",
     "build": "yarn run dumi build",
     "deploy": "bash ./scripts/deploy.sh",
     "lint:md": "lint-md *.md",
@@ -24,7 +25,7 @@
   "license": "MIT",
   "homepage": "https://github.com/tsejx/React-GuideBook#readme",
   "devDependencies": {
-    "dumi": "^1.0.20",
+    "dumi": "^1.0.34",
     "lint-md": "^0.1.1"
   }
 }

@@ -3,7 +3,7 @@ nav:
   title: 基础
   order: 1
 group:
-  title: 高级指引
+  title: 进阶指引
   order: 2
 title: 事件机制
 order: 3

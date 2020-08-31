@@ -1,7 +1,7 @@
 ---
 nav:
   title: 生态
-  order: 2
+  order: 3
 group:
   title: 数据流
   order: 3
@@ -24,3 +24,9 @@ Redux 中间件说白了就是在 action 被传递到 reducer 之前新进行了
 **参考资料：**
 
 - [redux-saga 化异步为同步](https://mp.weixin.qq.com/s?__biz=MzA4NjcyMDYzMg==&mid=2451805550&idx=1&sn=84c84d73789b960f845515d701a6e0d2&chksm=88135c79bf64d56fb27009192ec3d724645a1d375b9006b7c09bad0a2aa1a3446f823e90d928&scene=0&xtrack=1)
+
+https://chenyitian.gitbooks.io/redux-saga/content/
+
+https://redux-saga-in-chinese.js.org/
+
+https://www.bookstack.cn/read/redux-saga-in-chinese/README.md

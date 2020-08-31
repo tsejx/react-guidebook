@@ -1,4 +1,11 @@
-# React Guidebook
+<div align="center">
+    <img width="200" src="http://img.mrsingsing.com/react-guidebook-favicon.png">
+</div>
 
-本项目档致力于深究 React 框架实现原理，试图阐明关于 React 的 WHY（为什么要这样实现）以及 HOW（怎么实现），而 WHAT（这是什么）和另一个意义上的 HOW（怎么去使用这个）将不会大幅度讲解。
+<h1 align="center">React Guidebook</h1>
 
+<p align="center">📚 React 知识图谱 关于概念、技巧、生态、前沿、源码核心</p>
+
+<div align="center"><a href="https://tsejx.github.io/react-guidebook/" target="_blank">立即开始</a></div>
+
+</div>
