@@ -1,7 +1,7 @@
 ---
 nav:
   title: API
-  order: 3
+  order: 4
 group:
   title: ReactDOM
   order: 2
