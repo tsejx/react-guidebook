@@ -1,12 +1,12 @@
 ---
 nav:
-  title: 基础
-  order: 1
+  title: 架构
+  order: 2
 group:
-  title: 框架架构
-  order: 3
+  title: 虚拟 DOM 层
+  order: 1
 title: Virtual DOM
-order: 2
+order: 1
 ---
 
 # Virtual DOM

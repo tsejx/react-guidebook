@@ -3,10 +3,10 @@ nav:
   title: 基础
   order: 1
 group:
-  title: 核心架构
+  title: 其他
   order: 3
 title: 合成事件
-order: 5
+order: 1
 ---
 
 # 合成事件
