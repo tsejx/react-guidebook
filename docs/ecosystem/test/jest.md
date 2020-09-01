@@ -9,7 +9,7 @@ title: Jest
 order: 3
 ---
 
-## Jest
+# Jest
 
 Jest 是由 Facebook 开源的 React 单元测试框架，内部 DOM 操作基于 JSDOM，语法和断言基于 Jasmine 框架。
 
