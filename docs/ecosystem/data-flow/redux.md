@@ -15,8 +15,23 @@ order: 2
 >
 > Redux 是针对 JavaScript 应用的可预测状态容器
 
-- **可预测的（Predictable）**：因为 Redux 用了 Reducer 与纯函数（Pure Function）的概念，每个新的 State 都会由旧的 State 创建一个全新的 State，这样可以作所谓的时光旅行调试。
-- **状态容器（State Container）**：State 是集中在单一个对象树状结构下的单一 Store，Store 即是应用程序凌虚（App Domain）的状态集合
+Redux 是一个 **数据管理中心**，提供 **可预测化** 的状态管理，可以让你构建一致化的应用，运行于不同的环境（客户端、服务端、原生应用），并且易于测试。
+
+Redux 参考了 Flux 的架构思想，对 Flux 中冗余部分（如 Dispatcher）进行简化，同时将 Elm 语言中 **函数式编程** 的思想融入其中。
+
+```jsx | inline
+import React from 'react'
+import img from '../../assets/redux-model.jpg'
+
+export default () => <img alt="redux-model" src={img} width={520} />
+```
+
+<br/>
+
+**Redux 的特点：**
+
+- **可预测的（Predictable）**：因为 Redux 用了纯函数（Pure Function）的概念，每个新的 State 都会由旧的 State 创建一个全新的 State，这样可以作所谓的时光旅行调试
+- **状态容器（State Container）**：State 是集中在单一个对象树状结构下的单一 Store，Store 即是应用程序领域（App Domain）的状态集合
 - **JavaScript 应用**：这说明 Redux 并非单指设计给 React 使用的，它是独立的一个函数库，可通用于各种功能 JavaScript 应用
 
 通过一张图看 Redux 如何简化状态管理。
@@ -28,24 +43,13 @@ import img from '../../assets/redux_1.jpg'
 export default () => <img alt="Redux State" src={img} width={640} />
 ```
 
-Redux 是一个 **数据管理中心**，提供可预测化的状态管理，可以让你构建一致化的应用，运行于不同的环境（客户端、服务端、原生应用），并且易于测试。
-
-Redux 参考了 Flux 的架构思想，对 Flux 中冗余部分（如 Dispatcher）进行简化，同时将 Elm 语言中函数式编程的思想融入其中。
-
-```jsx | inline
-import React from 'react'
-import img from '../../assets/redux-model.jpg'
-
-export default () => <img alt="redux-model" src={img} width={640} />
-```
-
 ## 三大原则
 
-- **单一数据源**：整个应用只有唯一的状态树，也就是所有 State 最终维护在一个根级 Store 中。
-- **状态只读**：为了保证状态的可控性，最好的方式就是监控状态的变化。
-  - Redux Store 中的数据无法被直接修改。
+- **单一数据源**：整个应用只有唯一的状态树，也就是所有状态（State）最终维护在一个根级 Store 中
+- **状态只读**：为了保证状态的 **可控性**，最好的方式就是监控状态的变化
+  - Redux Store 中的数据无法被直接修改
   - 严格控制修改的执行。
-- **纯函数**：规定只能通过一个纯函数（Reducer）来描述修改。
+- **纯函数**：规定只能通过一个纯函数（Reducer）来描述修改
 
 ### 单一数据源
 
@@ -59,7 +63,7 @@ export default () => <img alt="redux-model" src={img} width={640} />
 
 至于我们担心的数据源对象过于庞大的问题，可通过了解 Redux 提供的工具函数 `combineReducers` 是如何化解的。
 
-> 📌 Flux 可能有多个 Store（区别于 Flux 的 Store，Redux 的 State 不会存放逻辑，操作数据在 Reducer 中处理。）
+> 📌 Flux 可能有多个 Store（区别于 Flux 的 Store，Redux 的 State 不会存放逻辑，操作数据在 Reducer 中处理）
 
 ### 状态只读
 
@@ -87,10 +91,10 @@ store.dispatch({
 
 **在 Reducer 中指定状态数据转换的逻辑。**
 
-**纯函数：**
+**纯函数的特点：**
 
-- 相同的输入，结果始终相同
-- 不对外部环境进行操作
+1. 相同的输入，结果始终相同
+2. 不对外部环境进行操作
 
 在 Redux 里，我们通过定义 Reducer 来确定状态的修改，而每一个 Reducer 都是纯函数，这意味着它没有副作用，即接受一定的输入，必定会得到一定的输出。
 
@@ -98,36 +102,36 @@ store.dispatch({
 
 ```js
 function visibilityFilter(state = 'SHOW_ALL', action) {
-    switch(action.type) {
-            case 'SET_VISIBILITY_FILTER'
-                return action.filter
-            default
-                return state
-    }
+  switch(action.type) {
+    case 'SET_VISIBILITY_FILTER'
+        return action.filter
+    default
+        return state
+  }
 }
 
 function todos(state = [], action) {
-    switch(action.type) {
-        case 'ADD_TODO':
-            return [
-                ...state,
-                {
-                    text: action.text,
-                    completed: false
-                }
-            ]
-        case 'COMPLTE_TODO':
-            return state.map((todo, index) => {
-                if (index === action.index) {
-                    return Object.assign({}, todo, {
-                        completed: true
-                    })
-                }
-                return todo
-            })
-        default:
-            return state
-    }
+  switch(action.type) {
+    case 'ADD_TODO':
+      return [
+        ...state,
+        {
+            text: action.text,
+            completed: false
+        }
+      ]
+    case 'COMPLTE_TODO':
+      return state.map((todo, index) => {
+        if (index === action.index) {
+          return Object.assign({}, todo, {
+            completed: true
+          })
+        }
+        return todo
+      })
+    default:
+      return state
+  }
 }
 
 import { combineReducers, createStore } from 'redux'
@@ -135,15 +139,15 @@ let reducer = combineReducers({ visibilityFilter: todos })
 let store = createStore(reducer)
 ```
 
-**为什么需要使用纯函数？**
+> 为什么需要使用纯函数？
 
-因为 Redux 的 Store 设计，并不是原本 Flux 架构的 Store，而是 ReducerStore，这个 ReducerStore 是一个在 Flux 中的 Store 的进化版，在说明中它有一个叫做 reduce 的方法。
+因为 Redux 的 Store 设计，并不是原本 Flux 架构的 Store，而是 Reducer Store，这个 Reducer Store 是一个在 Flux 中的 Store 的进化版，在说明中它有一个叫做 `reduce` 的方法。
 
-## 基本组成
+## 组成部分
 
 ### Store
 
-**Store**：应用程序的数据集合，并包含了所有对数据的变动方法。
+**Store** 是整个应用程序的数据集合，并包含了所有对数据的变动方法。
 
 通过 `redux` 的 `createStore` API 生成 Store，该方法可传三个参数：
 
@@ -153,59 +157,56 @@ let store = createStore(reducer)
 
 返回值为对象类型，具有以下属性：
 
-- `getState`：获取 state
-- `dispatch`：触发 action，更新 state
-- `subscribe`：订阅数据变更，注册监听器
+- `getState`：获取状态（`state`）
+- `dispatch`：触发动作（`action`），更新状态（`state`）
+- `subscribe`：订阅数据变更，注册监听器（数据变更时触发）
 - `replaceReducer`：
 - `[$$observable]`：
 
 ```js
-// 创建
-const store = createStore(Reducer, initStore);
-```
+import { createStore } from 'redux';
 
-```js
-// Reducer
-function fooApp(state = initialstate, props){
-  switch(action, type){
-      case SET_VISIBIlity_FILTER
-      	return Object.aasign({}, state, {
-          visibilityFitter: action = action.filter
-        })
-     return state
+function todos(state = [], action) {
+  switch(action.type) {
+    case 'ADD_TODO':
+      return state.concat([action.text])
+    default:
+      return state;
   }
 }
+
+// const store = createStore(Reducer, initStore);
+const store = createStore(todos, ['Coding']);
+
+store.dispatch({
+  type: 'ADD_TODO',
+  text: 'Drinking coffe'
+})
+
+console.log(store.getState());
+// [ 'Coding', 'Drinking coffee' ]
 ```
 
 ### Action
 
-Action 是把数据从应用传到 Store 的有效载荷。它是 Store 数据的唯一来源，也就是说要改变 Store 中的 State 就需要触发一个 Action。
+Action 是把数据从应用传到 Store 的有效载荷（Payload）。它是 Store 数据的唯一来源，也就是说要改变 Store 中的 State 就需要触发一个 Action。
 
-Action 本质上是一个普通的 JavaScript 对象，action 内必须使用一个字符串类型 type 字段来表示将要执行的动作，除了 type 字段外，action 对象的结构完全由你来决定。多数情况下，type 会被定义成字符串常量。当应用规模越来越大时，建议用单独的模块或文件来存放 action type。
+Action 本质上是一个普通的 JavaScript 对象，`action` 内必须使用一个字符串类型 `type` 字段来表示将要执行的动作，除了 `type` 字段外，`action` 对象的结构完全由你来决定。多数情况下，`type` 会被定义成字符串常量。当应用规模越来越大时，建议用单独的模块或文件来存放 Action Type。
 
 ```js
-// Common Action
-const action = {
-    type: 'ADD_LIST',
-    item: 'list-item-1',
+import { createStore } from 'redux'
+const store = createStore(todos, ['Use Redux'])
+
+function addTodo(text) {
+  return {
+    type: 'ADD_TODO',
+    text
+  }
 }
 
-// Usage
-// store.dispatch(action)
-
-// 通常为了便于调用，会有一个 Action 创建函数 action creator
-// function addList(item) {
-//     return const action = {
-//         type: 'ADD_LIST',
-//         item,
-//     }
-// }
-
-// 调用就会变成
-// dispatch(addList('list-item-1'))
+store.dispatch(addTodo('Read the docs'))
+store.dispatch(addTodo('Read about the middleware'))
 ```
-
-> 使用单独的模块或文件来定义 action type 常量并不必须的，甚至根本不需要定义。对于小应用来说，使用字符串做 action type 更方便些。不过，在大型应用中把它们显式地定义成常量还是利大于弊。
 
 ### Action Creator
 
@@ -218,14 +219,14 @@ function addToDo(text) {
 }
 ```
 
-这样将使 action 创建函数更容易被移动和测试。
+这样将使 `action` 创建函数更容易被移动和测试。
 
 ### Reducer
 
-reducer 是根据 action 修改 store 将其转变成下一个 state，记住 actions 只描述了有事情发生了这一事实，并没有描述应用如何更新 state。
+**Reducer** 是根据 `action` 修改 `store` 将其转变成下一个 `state`，记住 `actions` 只描述了有事情发生了这一事实，并没有描述应用如何更新 `state`。
 
 ```js
-(preState, action) => newState;
+(prevState, action) => nextState;
 ```
 
 保持 Reducer 纯净非常重要。永远不要在 Reducer 里做这些操作：
@@ -233,8 +234,6 @@ reducer 是根据 action 修改 store 将其转变成下一个 state，记住 ac
 - 修改传入参数
 - 执行有副作用、如 API 请求和路由跳转
 - 调用非纯函数，如 `Date.now()` 和 `Math.random()`
-
-> Reducer 是纯函数它仅仅用于计算下一个 State。它应该是完全可预测的：多次传入相同的输入必须产出相同的输出，它不应该有副作用，如 API 调用或路由跳转。这些应该在 dispatch action 前发生。
 
 ```js
 // reducer
@@ -250,10 +249,10 @@ function todoApp(state = initialState, action) {
 }
 ```
 
-- 不要修改 State
-  - 使用 Object.assign 新建一个副本。不能这样使用 `Object.assign(state, { visibilityFilter: action.filter })`，因为它会改变第一参数的值。你必须把第一个参数设置为空对象。
+- 不要直接修改 State
+  - 使用 `Object.assign` 新建一个副本。不能这样使用 `Object.assign(state, { visibilityFilter: action.filter })`，因为它会改变第一参数的值。你必须把第一个参数设置为空对象。
   - 你也可以开启对 ES7 提案对象展开运算符的支持，从而使用 `{...state, visibilityFilter: action.filter}` 达到相同的目的
-- 在 default 情况下返回旧的 state。遇到未知的 action 时，一定要返回旧的 state。
+- 在 `default` 情况下返回旧的 `state`。遇到未知的 `action` 时，一定要返回旧的 state。
 
 ```js
 // A normal Reducer
@@ -277,34 +276,34 @@ function ListReducer(state = initList, action) {
 
 ## 工作流程
 
-1. 用户（操作 View）发出 Action，发出方式就用到了 dispatch 方法
-2. 然后，Store 自动调用 Reducer，并且传入两个参数（当前 State 和收到 Action），Reducer 会返回新的 State，如果有 Middleware，Store 会将当前 State 和收到的 Action 传递给 Middleware，Middleware 会调用 Reducer 然后返回新的 State
+1. 用户（操作 View）发出 Action，发出方式就用到了 `store.dispatch` 方法
+2. 然后，Store 自动调用 Reducer，并且传入两个参数（当前 State 和收到 Action），Reducer 根据 Action 返回新的 State，如果有 Middleware，Store 会将当前 State 和收到的 Action 传递给 Middleware，Middleware 会调用 Reducer 然后返回新的 State
 3. State 一旦有变化，Store 就会调用监听函数，来更新 View
 
-## 优缺点
+## 对比测评
 
-### 优点
+### 自我评价
+
+优点：
 
 - 可预测：始终有一个唯一准确的数据源（single source of truth）即 Store，因此不存在如何将当前状态 Store 与动作和应用的其他部分同步的问题
 - 易维护：具备可预测的结果和严格的组织结构让代码更容易维护
 - 易测试：编写可测试代码的首要准则是编写可以仅做一件事并且独立的小函数（single responsibility principle），Redux 的代码几乎全部都是这样的函数：短小、纯粹、分离
 
-### 缺陷
+缺陷：
 
 - 一个组件所需要的数据，必须由父组件传过来，而不能像 Flux 中直接 从 Store 取。
-- 当一个组件相关数据更新时，即使父组件不需要用到这个组件，父组件还是会 re-render，可能会有效率影响，或者需要写复杂的 `shouldComponentUpdate` 进行判断。
+- 当一个组件相关数据更新时，即使父组件不需要用到这个组件，父组件还是会 `re-render`，可能会有效率影响，或者需要写复杂的 `shouldComponentUpdate` 进行判断。
 
-## Redux 和 Flux 对比
+### 与 Flux 对比
 
 Redux 是 Flux 架构思想的实践方案，同时又在其基础上进行改进。Redux 承载了 Flux 单向数据流、Store 是唯一的数据源的思想。
 
-- Redux 中没有 Dispatcher：它使用 Store 的 Store.dispatch 方法来把 action 传给 Store，由于所有的 action 处理都会经过这个 Store.dispatch 方法，所以在 Redux 中很容易实现 Middleware 机制。Middleware 可以让你在 reducer 执行与执行后进行拦截并插入代码，来达到操作 action 和 Store 的目的，这样一来很容易实现灵活的日志打印、错误收集、API 请求、路由等操作。
-- Redux 只有一个 Store：Flux 中允许有多个 Store，但是 Redux 只允许有一个，相较于多个 Store 的 Flux，一个 Store 更加清晰，并易于管理
-
-> Redux 和 Flux 最大的不同是 Redux 没有 dispatcher 且不支持多个 Store。Redux 只有一个单一的 store 和一个根级的 reducer 函数（reducer），随着应用不断变大，我们需要将根级的 reducer 拆成多个小的 reducers，分别独立地操作 state 树的不同部分，而不是添加新的 stores。
+- Redux 中没有 Dispatcher：它使用 Store 的 `Store.dispatch` 方法来把 action 传给 Store，由于所有的 action 处理都会经过这个 `Store.dispatch` 方法，所以在 Redux 中很容易实现 Middleware 机制。Middleware 可以让你在 `reducer` 执行与执行后进行拦截并插入代码，来达到操作 `action` 和 `store` 的目的，这样一来很容易实现灵活的日志打印、错误收集、API 请求、路由等操作。
+- Redux 仅有一个 Store：Flux 中允许有多个 Store，但是 Redux 只允许有一个，相较于多个 Store 的 Flux，一个 Store 更加清晰，并易于管理
 
 | Flux                            | Redux                         |
-| ------------------------------- | ----------------------------- |
+| :------------------------------- | :----------------------------- |
 | Store 包含状态和更改逻辑        | Store 和更改逻辑是分开的      |
 | 有多个 Store                    | 只有一个 Store                |
 | 所有 Store 都互不影响且是平级的 | 带有分层 reducer 的单一 Store |
@@ -316,11 +315,11 @@ Redux 是 Flux 架构思想的实践方案，同时又在其基础上进行改�
 
 随着 JavaScript 应用越来越大，越来越复杂，我们需要管理的 State 变得越来越多。这些 State 可能包括服务器响应、缓存数据、本地生成尚未持久化到服务器的数据，也包括 UI 状态，如激活的路由，被选中的标签，是否显示加载动效或者分页器等。
 
-管理不断变化的 state 非常困难。如果一个 model 的变化会引起另一个 model 的变化，那么当 view 变化时，就可能引起对应 model 以及另一个 model 的变化，依次地，可能会引起另一个 view 的变化。直至你搞不清楚到底发生了什么。state 在什么时候，由于什么原因，如何变化已然不受控制。当系统变得错综复杂时，想重现问题或者添加新功能就会变得非常复杂。
+管理不断变化的 `state` 非常困难。如果一个 `model` 的变化会引起另一个 `model` 的变化，那么当 `view` 变化时，就可能引起对应 `model` 以及另一个 `model` 的变化，依次地，可能会引起另一个 `view` 的变化。直至你搞不清楚到底发生了什么。`state` 在什么时候，由于什么原因，如何变化已然不受控制。当系统变得错综复杂时，想重现问题或者添加新功能就会变得非常复杂。
 
 虽然 React 试图在试图层禁止异步和直接操作 DOM 来解决这个问题。美中不足的是，React 依旧把处理 State 中数据的问题留给了你。Redux 就是为了帮你解决这个问题的。
 
-Redux 应用中所有的 State 都以一个对象树的形式储存在一个单一的 Store 中，唯一改变 State 的办法是触发 action，action 是一个描述发生了什么的对象。为了描述 action 如何改变 State 树，你需要编写 reducers。
+Redux 应用中所有的 State 都以一个对象树的形式储存在一个单一的 Store 中，唯一改变 State 的办法是触发 `action`，`action` 是一个描述发生了什么的对象。为了描述 `action` 如何改变 State 树，你需要编写 `reducers`。
 
 🌰 **标准示例：**
 
@@ -381,15 +380,12 @@ store.dispatch({ type: 'DECREMENT' });
 - [📖 Redux 中文文档](https://github.com/camsong/redux-in-chinese)
 - [📝 Redux 源码分析与设计思路分析](https://github.com/WisestCoder/blog/issues/1)
 - [📝 单页应用的数据流方案探索](https://zhuanlan.zhihu.com/p/26426054)
-
 - [📝 Redux 概念之一：Redux 简介](https://www.imooc.com/article/16061)
 - [📝 Redux 概念之二：Redux 的三大原则](https://www.imooc.com/article/16062)
 - [📝 Redux 概念之三：Action 与 ActionCreator](https://www.imooc.com/article/16063)
 - [📝 Redux 概念之四：Reducer 与纯函数](https://www.imooc.com/article/16064)
 - [📝 Redux 概念之五：Redux 套用七步骤](https://www.imooc.com/article/16065)
-
 - [如何在 React+Redux 的项目中更优雅的实现前端自动化测试](https://testerhome.com/topics/8032)
 - [Redux 从设计到源码](https://tech.meituan.com/2017/07/14/redux-design-code.html)
-
-* [Vuex、Flux、Redux、Redux-saga、Dva、MobX](https://zhuanlan.zhihu.com/p/53599723)
-* [Flux、Redux、Vuex、MobX 总结（概念篇）](https://zhuanlan.zhihu.com/p/75696114)
+- [Vuex、Flux、Redux、Redux-saga、Dva、MobX](https://zhuanlan.zhihu.com/p/53599723)
+- [Flux、Redux、Vuex、MobX 总结（概念篇）](https://zhuanlan.zhihu.com/p/75696114)
