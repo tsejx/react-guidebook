@@ -3,13 +3,13 @@ nav:
   title: 架构
   order: 2
 group:
-  title: 虚拟 DOM 层
-  order: 1
-title: 差异化算法
+  title: 旧版架构
+  order: 5
+title: diff 算法
 order: 2
 ---
 
-# 差异化算法
+# diff 算法
 
 diff 算法作为 Virtual DOM 的加速器，其算法的改进优化是 React 整个界面渲染的基础和性能的保障，同时也是 React 源码中最神秘的，最不可思议的部分
 
@@ -23,7 +23,7 @@ diff 算法会帮助我们就算出 VirtualDOM 中真正变化的部分，并只
 // Traditional Diff Algorithm
 let res = [];
 // 比较子节点
-const diffLeafs = function(beforeLeaf, afterLeaf) {
+const diffLeafs = function (beforeLeaf, afterLeaf) {
   // 获取较大节点树的长度
   let count = Math.max(beforeLeaf.children.length, after.children.length);
   // 循环遍历

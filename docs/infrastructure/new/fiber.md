@@ -13,7 +13,6 @@ order: 1
 
 Fiber 是一个基于优先级策略和帧间回调的循环任务调度算法的架构方案。
 
-
 **问题**：随着应用变得越来越庞大，整个更新渲染的过程开始变得吃力，大量的组件渲染会导致主进程长时间被占用，导致一些动画或高频操作出现卡顿和掉帧的情况。而关键点，便是 **同步阻塞**。在之前的调度算法中，React 需要实例化每个类组件，生成一棵组件树，使用 **同步递归** 的方式进行遍历渲染，而这个过程最大的问题就是无法 **暂停和恢复**。
 
 **解决方法**：当遇到进程同步阻塞的问题时，**任务分割**、**异步调用** 和 **缓存策略** 是三个显著的解决思路。而 React Fiber 便是为了实现任务分割而诞生的。
@@ -22,15 +21,15 @@ Fiber 是一个基于优先级策略和帧间回调的循环任务调度算法�
 
 ## 架构背景
 
-究其原因是浏览器的渲染引擎是单线程，它将 GUI 描绘、时间器处理、事件处理、JavaScript 执行、远程资源加载统统放在一起。当做某件事，只有将它做完才能做下一件事。如果有足够的时间，浏览器是会对我们的代码进行编译优化（JIT）及进行热代码优化，一些 DOM 操作，内部也会对 Reflow（重绘）进行处理。 Reflow 是一个性能黑洞，很可能让页面的大多数元素进行重新布局。
+究其原因是浏览器的渲染引擎是单线程，它将 GUI 描绘、时间器处理、事件处理、JavaScript 执行、远程资源加载通通放在一起。当做某件事，只有将它做完才能做下一件事。如果有足够的时间，浏览器是会对我们的代码进行**编译优化**（JIT）及进行**热代码优化**，一些 DOM 操作，内部也会对 Reflow（重绘）进行处理。 Reflow 是一个性能黑洞，很可能让页面的大多数元素进行重新布局。
 
 ### 浏览器中的帧
 
 > 之前的问题主要的问题是任务一旦执行，就无法中断，JavaScript 引擎线程一直占用主线程，导致卡顿。
 
-页面是一帧一帧绘制出来的，当美妙绘制的帧数（FPS）达到 60 时，页面是流畅的，小于这个值时，用户会感觉到卡顿。
+页面是一帧一帧绘制出来的，当每秒绘制的帧数（FPS）达到 60 时，页面是流畅的，小于这个值时，用户会感觉到卡顿。
 
-1 秒 60 帧，所以每帧分到的时间是 `1000/60 ≈ 16 ms`。所以我们编写代码时力求不让一帧的工作量超过 16ms。
+1 秒 60 帧，所以每帧分到的时间是 `1000/60 ≈ 16.6 ms`。所以我们编写代码时力求不让一帧的工作量超过 16.6ms。
 
 ```jsx | inline
 import React from 'react';
@@ -39,17 +38,19 @@ import img from '../../assets/life-of-a-frame.png';
 export default () => <img alt="Life of a Frame" src={img} width={800} />;
 ```
 
-浏览器一帧内的工作
+通过上图可看到，一帧内可完成如下六个步骤的任务：
 
-通过上图可看到，一帧内需要完成如下六个步骤的任务：
-
-- 处理用户的交互
-- JavaScript 解析执行
-- 帧开始，窗口尺寸变更、页面滚动等处理
+- 用户交互输入事件（Input events）
+  - Blocking input events（阻塞输入事件）：例如 `touch` 或 `wheel`
+  - Non-blocking input events（非阻塞输入事件）：例如 `click` 或 `keypress`
+- JavaScript 引擎解析执行：执行定时器（Timers）事件等回调
+- 帧开始（Begin frame）：每一帧事件（Per frame events），例如 `window resize`、`scroll` 或 `media query change`
 - rAF（requestAnimationFrame）
-- 布局
+- 页面布局（Layout）：计算样式（Recalculate style）和更新布局（Update Layout）
+- 绘制渲染（Paint）：合成更新（Compositing update）、重绘部分节点（Paint invalidation）和 Record
+- 执行 RIC (RequestIdelCallback)
 
-如果这六个步骤中，任意一个步骤所占用的时间过长，总时间超过 16ms 后，用户业务就能看到明显的卡顿。
+如果这七个步骤中，任意一个步骤所占用的时间过长，总时间超过 16ms 后，用户业务就能看到明显的卡顿。
 
 而在上节提到的 **调和阶段** 花的时间过长，也就是 JavaScript 执行的时间过长，那么就有可能在用户有交互的时候，本来应该渲染下一帧，但是在当前一帧里还在执行 JavaScript，就导致用户交互不能马上得到反馈，从而产生卡顿感。
 
@@ -146,7 +147,7 @@ import img from '../../assets/fiber-workflow.png';
 export default () => <img alt="React Fiber Workflow" src={img} width={800} />;
 ```
 
-1. 第一部分从 `ReactDOM.render` 方法开始，把接收的 React Element 转换为 Fiber 节点，并为其设置优先级，创建 Update，加入到更新队列，这部分主要是做一些初始数据的准备。
+1. 第一部分从 `ReactDOM.render` 方法开始，把接收的 React Element 转换为 Fiber 节点，并为其[设置优先级](#优先级策略)，创建 Update，加入到更新队列，这部分主要是做一些初始数据的准备。
 2. 第二部分主要是三个函数：`scheduleWork`、`requestWork`、`performWork`，即安排工作、申请工作、正式工作三部曲，React16 新增的异步调用的功能则在这部分实现，这部分就是 **Schedule 阶段**，前面介绍的 Cooperative Scheduling 就是在这个阶段，只有在这个解决获取到可执行的时间片，第三部分才会继续执行。
 3. 第三部分是个大循环，遍历所有的 Fiber 节点，通过 Diff 算法计算所有更新工作，产出 EffectList 给到 Commit 阶段使用，这部分的核心就是 `beginWork` 函数，这部分基本就是 **FIber Reconciler**，包括 **reconciliation** 和 **commit** 阶段。
 
@@ -154,7 +155,7 @@ export default () => <img alt="React Fiber Workflow" src={img} width={800} />;
 
 React 运行时存在三种实例（结合上文提到的 React 三层架构理解）：
 
-```
+```plain
 Element - 描述 UI 结构内容（type、props）
 --------
 Instances - React 维护的 VirtualDOM Tree Node
@@ -164,9 +165,9 @@ DOM - 真实 DOM 节点
 
 React 在首次渲染（执行 `ReactDOM.render`）时，会通过 `React.createElement` 创建一颗 Element 树，可以称之为 **Virtual DOM Tree**，由于要记录上下文信息，加入了 Fiber，每一个 Element 会对应一个 Fiber Node，将 Fiber Node 链接起来的结构成为 Fiber Tree。它反映了用于渲染 UI 的应用程序的状态。这棵树通常被称为 **current 树（当前树，记录当前页面的结构状态）**。
 
-在后续的更新过程中（`setState`），每次重新渲染都会重新创建 Element, 但是 Fiber 不会，Fiber 只会使用对应的 Element 中的数据来更新自己必要的属性。这个过程在 Fiber 出现之前的 `reconciler`（称为 Stack Reconciler）是采取自顶向下递归比较来实现的，所以 <span style="color: red;font-weight: bold;">无法中断这个递归比较的过程</span>（持续占用主线程），这样主线程上的布局、动画等周期性任务以及交互响应就无法立即得到处理，影响用户体验。
+在后续的更新过程中（`setState`），每次重新渲染都会重新创建 Element，但是 Fiber 不会，Fiber 只会使用对应的 Element 中的数据来更新自己必要的属性。这个过程在 Fiber 出现之前的 `reconciler`（称为 Stack Reconciler）是采取自顶向下递归比较来实现的，所以 <span style="color: red;font-weight: bold;">无法中断这个递归比较的过程</span>（持续占用主线程），这样主线程上的布局、动画等周期性任务以及交互响应就无法立即得到处理，影响用户体验。
 
-> ⚠️ **注意：**Fiber 之前的 `reconciler` 被称为 Stack Reconciler，就是因为这些调度上下文信息是由系统栈来保存的。虽然之前一次性做完，强调栈没什么意义，起个名字只是为了便于区分 Fiber Reconciler。
+> ⚠️ **注意**：Fiber 之前的 `reconciler` 被称为 Stack Reconciler，就是因为这些调度上下文信息是由系统栈来保存的。虽然之前一次性做完，强调栈没什么意义，起个名字只是为了便于区分 Fiber Reconciler。
 
 Fiber 解决这个问题的 **思路** 是把渲染/更新过程（递归 `diff`）拆分为一系列小任务，每次检查树上的一小部分，完成后检查是否还有时间继续下个任务，有的话继续，没有的话自己挂起，主线程不忙的时候再继续。
 
@@ -174,7 +175,7 @@ Fiber 解决这个问题的 **思路** 是把渲染/更新过程（递归 `diff`
 
 因此，Instances 层新增了这些实例：
 
-```
+```plain
 React Elements
     描述 UI 长什么样子（type、props）
 --------
@@ -193,7 +194,7 @@ DOM
     真实 DOM 节点
 ```
 
-> ⚠️ **注意：**放在虚线上的两层（WorkInProgress 和 Effect）都是临时的结构，仅在更新时有用，日常不持续维护。`Effect` 指的就是 `side effect`，包括将要做的 `DOM Change`。
+> ⚠️ **注意**：放在虚线上的两层（WorkInProgress 和 Effect）都是临时的结构，仅在更新时有用，日常不持续维护。`Effect` 指的就是 `side effect`，包括将要做的 `DOM Change`。
 
 Fiber Tree 上各节点的主要结构（每个节点称为 FiberNode）如下：
 
@@ -277,7 +278,7 @@ type Fiber {
 import React from 'react';
 import img from '../../assets/fiber-tree-sample.jpeg';
 
-export default () => <img alt="Fiber Tree Sample" src={img} width={640} /> ;
+export default () => <img alt="Fiber Tree Sample" src={img} width={640} />;
 ```
 
 Fiber Tree 通过节点保存与映射，便能够随时地进行停止和重启，这样便能达到实现 **任务分割** 的基本前提。
@@ -333,7 +334,7 @@ export function createWorkInProgress(
 import React from 'react';
 import img from '../../assets/fiber-work-in-progress.png';
 
-export default () => <img alt="Fiber WorkInProgress Tree" src={img} width={540} /> ;
+export default () => <img alt="Fiber WorkInProgress Tree" src={img} width={540} />;
 ```
 
 ### Effect List
@@ -344,7 +345,7 @@ Effect List 可以理解为是一个存储 `effectTag` 副作用列表容器。�
 import React from 'react';
 import img from '../../assets/fiber-effect-list.png';
 
-export default () => <img alt="Fiber Effect List" src={img} width={640} /> ;
+export default () => <img alt="Fiber Effect List" src={img} width={640} />;
 ```
 
 React 采用深度优先搜索算法，在 `render` 阶段遍历 Fiber 树时，把每一个有副作用的 Fiber 筛选出来，最后构建生成一个只带副作用的 Effect List 链表。
@@ -397,7 +398,7 @@ Fiber Reconciler 的核心流程可以分为两个阶段（phrase）：
 - `[UNSAFE_]componentWillUpdate`（弃用）
 - `render`
 
-> ⚠️ **注意：**由于第 1 阶段的生命周期函数可能会被多次调用，默认以 `low` 优先级（后面介绍的六种优先级之一）执行，被高优先级任务打断的话，稍后重新执行。
+> ⚠️ **注意**：由于第 1 阶段的生命周期函数可能会被多次调用，默认以 `low` 优先级（后面介绍的六种优先级之一）执行，被高优先级任务打断的话，稍后重新执行。
 
 构建 WorkInProgress Tree 的过程就是 diff 的过程，也就是 VirtualDOM 的数据对比，是个适合拆分的阶段，对比一部分 VirtualDOM Tree 后，通过 `requestIdleCallback` 来调度执行每组任务，每完成一个任务后回来看看有没有更高优先级的任务需要执行，有的话则立即执行，每完成一组任务，把时间控制权交还给主线程，直到下次 `requestIdleCallback` 回调再继续构建 WorkInProgress Tree。
 
@@ -408,7 +409,7 @@ Fiber Reconciler 的核心流程可以分为两个阶段（phrase）：
 
 ```js
 // 类似于这样的方式
-requestIdleCallback(deadline => {
+requestIdleCallback((deadline) => {
   // 当有空闲时间时，我们执行一个组件渲染
   // 把任务塞到一个个碎片时间中去
   while ((deadline.timeRemaning() > 0 || deadline.didTimeout) && nextComponent) {
@@ -451,19 +452,19 @@ let handle = window.requestIdleCallback((deadline) => {
 // 可用时间剩余38.64ms
 ```
 
-⚠️ **注意：**`requestIdleCallback` 调度只是希望做到流畅体验，并不能绝对保证什么，例如：
+⚠️ **注意**：`requestIdleCallback` 调度只是希望做到流畅体验，并不能绝对保证什么，例如：
 
 ```js
 // do some stuff
-const now = +new Date,
-      timespent = 300;
+const now = +new Date(),
+  timespent = 300;
 
-while (+new Date < now + timespent);
+while (+new Date() < now + timespent);
 ```
 
 如果搞事情（对应 React 中的生命周期函数等时间上不受 React 控制的东西）就花了 300ms，什么机制也保证不了流畅。
 
-> ⚠️ **注意：**一般剩余可用时间也就 10-50ms，可调度空间不算很宽裕。
+> ⚠️ **注意**：一般剩余可用时间也就 10-50ms，可调度空间不算很宽裕。
 
 这个函数的兼容性并不是很好，并且它还有一个致命的缺陷：
 
@@ -482,32 +483,32 @@ while (+new Date < now + timespent);
 
 ```js
 let channel = new MessageChannel();
-let activeFrameTime = 1000/60; // 16.6
+let activeFrameTime = 1000 / 60; // 16.6
 let frameDeadLine; // 这一帧的截止时间
 let pendingCallback;
 let timeRemaining = () => frameDeadLine - performance.now();
 
-channel.port2.onmessage = function() {
+channel.port2.onmessage = function () {
   let currentTime = performance.now();
   // 如果帧的截止时间已经小于当前时间，说明已经过期了
   let didTimeout = frameDeadLine <= currentTime;
   if (didTimeout || timeRemaining() > 0) {
     if (pendingCallback) {
-      pendingCallback({ didTimeout, timeRemaining })
+      pendingCallback({ didTimeout, timeRemaining });
     }
   }
-}
+};
 
 window.requestIdleCallback = (callback, options) => {
   requestAnimationFrame((rafTime) => {
-    console.log('rafTime', rafTime)
+    console.log('rafTime', rafTime);
     // 每帧开始时间加上 16.6 就是这一帧的截止时间
     frameDeadLine = rafTime + activeFrameTime;
     pendingCallback = callback;
     // 其实发消息之后，相当于添加了一个宏任务
-    channel.port1.postMessage('Hello')
-  })
-}
+    channel.port1.postMessage('Hello');
+  });
+};
 ```
 
 ### Reconciler - commit 阶段
@@ -528,6 +529,7 @@ Commit 阶段会执行如下生命周期方法：
 > 处理 Effect List 三部曲：更新 DOM 树、调用组件生命周期函数以及更新 `ref` 等内部状态
 >
 > 注意区别 `reconciler`、`reconcile` 和 `reconciliation`：
+>
 > - `reconciler`：调和器（名词），可以说是 React 工作的一个模块，协调模块
 > - `reconcile`：调和器调和的动作（动词）
 > - `reconciliation`：只是 `reconcile` 过程的第一阶段
@@ -544,7 +546,12 @@ Commit 阶段会执行如下生命周期方法：
 - `low`（5）：稍微延迟（100-200ms）执行也没有关系，数据获取或更新存储的结果
 - `offscreen`（6）：不会被看到，但要做好工作以防它变得可见
 
-`synchronous` 首屏（首次渲染）用，要求尽量快，不管会不会阻塞 UI 线程；`animation` 通过 `requestAnimationFrame` 来调度，这样在下一帧就能立即开始动画过程；后三个都是由 `requestIdleCallback` 回调执行的；`offscreen` 指的是当前隐藏的、屏幕外的（看不见的）元素。
+优先级说明：
+
+- `synchronous` 首屏（首次渲染）用，要求尽量快，不管会不会阻塞 UI 线程；
+- `animation` 通过 `requestAnimationFrame` 来调度，这样在下一帧就能立即开始动画过程；
+- 后三个都是由 `requestIdleCallback` 回调执行的；
+- `offscreen` 指的是当前隐藏的、屏幕外的（看不见的）元素。
 
 高优先级的比如键盘输入（希望立即得到反馈），低优先级的比如网络请求，让评论显示出来等等。另外，紧急的事允许插队。
 
@@ -555,7 +562,7 @@ Commit 阶段会执行如下生命周期方法：
 
 **简明的优先级策略**：`文本框输入 > 本次调度结束需要完成的任务 > 动画过渡 > 交互反馈 > 数据更新 > 不会显示但以防将来会显示的任务`
 
-> ⚠️ **注意：**React 17 全面开启 `async rendering`。因此 17 将会废弃多个生命周期钩子函数（`will` 系列），原因是开启 `async rendering`，在 `render` 函数之前的所有函数，都有可能被执行多次。
+> ⚠️ **注意**：React 17 全面开启 `async rendering`。因此 17 将会废弃多个生命周期钩子函数（`will` 系列），原因是开启 `async rendering`，在 `render` 函数之前的所有函数，都有可能被执行多次。
 >
 > 长期以来，原有的生命周期函数总是会诱惑开发者在 `render` 之前的生命周期函数做一些动作，现在这些动作还放在这些函数中的话，有可能会被调用多次，这肯定不是你想要的结果。在 `componentWillMount` 执行网络请求，无论请求多快都无法赶上首次 `render`，而且 `componentWillMount` 在服务端渲染也会被调用，这样的 I/O 操作放在 `componentDidMount` 里更加合适。
 >
@@ -570,13 +577,13 @@ Commit 阶段会执行如下生命周期方法：
 
 Fiber 体系的核心机制是负责任务调度的 `ReactFiberScheduler`，相当于之前的 `ReactReconciler`。
 
-VirtualDOM Tree 变成 Fiber T ree了，以前是自上而下的简单树结构，现在是基于单链表的树结构，维护的节点关系更多一些。
+VirtualDOM Tree 变成 Fiber T ree 了，以前是自上而下的简单树结构，现在是基于单链表的树结构，维护的节点关系更多一些。
 
 ```jsx | inline
 import React from 'react';
 import img from '../../assets/fiber-tree.png';
 
-export default () => <img alt="Fiber Tree" src={img} width={540} /> ;
+export default () => <img alt="Fiber Tree" src={img} width={540} />;
 ```
 
 ## 总结
@@ -592,7 +599,7 @@ React Fiber 最终提供的关键特性主要是：
 
 增量渲染用来解决掉帧的问题，渲染任务拆分之后，每次只做一小段，做完一段就把时间控制权交还给主线程，而不像之前长时间占用。这种策略叫做 `cooperative scheduling`（合作式调度），操作系统的 3 种任务调度策略之一（Firefox 还对真实 DOM 应用了这项技术）。
 
-另外，React 自身的 `killer feature` 是  Virtual DOM，两个原因：
+另外，React 自身的 `killer feature` 是 Virtual DOM，两个原因：
 
 - Coding UI 变简单了（不用关心浏览器应该怎么做，而是把下一刻的 UI 描述给 React 听）
 - 既然 DOM 能 Virtued，别的（硬件、VR、Native APP）也能

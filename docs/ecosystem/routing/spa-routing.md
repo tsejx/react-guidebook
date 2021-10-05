@@ -5,21 +5,20 @@ nav:
 group:
   title: 路由
   order: 1
-title: 路由机制
+title: 单页应用路由机制
 order: 1
 ---
 
-
-# 单页面应用路由机制
+# 单页应用路由机制
 
 单页面应用路由机制的实现方案：
 
 - 利用 URL 的 Hash（`#`）
-- 利用 HTML5 新增方法 History Interface
+- 利用 HTML5 新增方法 History API
 
 ## Hash 路由
 
-在  HTML5  还没有流行开来时，一般  SPA 都采用  URL  的 `hash(#)`  作为锚点，获取到 `#` 之后的值，并监听其改变，再进行渲染对应的子页面。当改变锚点时，页面的主体部分会切换内容，但是整个页面不会被重新刷新。
+在  HTML5  还没有流行时，一般  SPA 都采用  URL  的 `hash(#)`  作为锚点，获取到 `#` 之后的值，并监听其改变，再进行渲染对应的子页面。当改变锚点时，页面的主体部分会切换内容，但是整个页面不会被重新刷新。
 
 🌰 **标准示例：**
 
@@ -30,18 +29,18 @@ console.log(location.hash);
 // '#/mrsingsing'
 ```
 
-> 了解更多关于 [Location 对象](https://tsejx.github.io/JavaScript-Guidebook/browser-object-model/the-location-object/the-location-object-properties.html)
+> 了解更多关于 [Location 对象](https://tsejx.github.io/javascript-guidebook/browser-object-model/window/location)
 
-根据获取到的信息，通过 Window 对象下用于监听 `hash` 变化的方法 `onhashchange` 触发相关事件程序。
+根据获取到的信息，通过 Window 对象下用于监听 `window.location.hash` 变化的方法 `onhashchange` 触发相关事件程序。
 
 ```js
-window.addEventListener('hashChange', e => {
+window.addEventListener('hashChange', (e) => {
   e.preventDefault();
   console.log(location.hash);
 });
 ```
 
-**载入不同页面的方式：**
+载入不同页面的方式：
 
 - 寻找 DOM 节点并改变视图
 - 加载（`import`）脚本文件，文件内部导出（`export`）模版字符串
@@ -72,7 +71,7 @@ export default str;
   // 替换挂载节点的内部 HTML
   document.querySelector('#app').innerHTMl = app;
   // 监听 hash 发生改变时，变更挂载节点的内部 HTML
-  window.addEventListener('hashChange', e => {
+  window.addEventListener('hashChange', (e) => {
     e.preventDefault();
     document.querySelector('#app').innerHTMl = location.hash;
   });
@@ -109,17 +108,20 @@ history.back();
 在 HTML5 中，浏览器 History 对象新增几个操作浏览历史状态栈的 API。
 
 ```js
-// 添加新的状态到浏览历史状态栈
+// 添加新的状态到浏览历史状态栈，但是不会发起请求
 histoy.pushState();
-// 用新的状态替换当前浏览历史状态栈
+
+// 用新的状态替换当前浏览历史状态栈，还可以对浏览器记录进行修改
 history.replaceState();
+
 // 返回当前状态对象
 history.state;
+
 // 历史状态栈发生变更时触发
 history.popstate;
 ```
 
-> 具体实现方式和 API 参数参阅 [History 对象的方法](https://tsejx.github.io/JavaScript-Guidebook/browser-object-model/the-history-object/the-history-object-methods.html)
+> 具体实现方式和 API 参数参阅 [History 对象的方法](https://tsejx.github.io/javascript-guidebook/browser-object-model/window/history)
 
 通过 `history.pushState` 或者 `history.replaceState`也能实现改变 URL 的同时，不会刷新页面。所以 History 也具备实现路由控制的能力。然而，Hash 的改变会触发 `onhashchange` 事件，History 的改变并不会触发任何事件。
 
@@ -133,9 +135,9 @@ history.popstate;
 
 3. 在 JavaScript 代码中直接修改路由
 
-第 2、3 种情况可视为同类型场景，因为 `<a>` 标签的默认事件可以被禁止，进而使用 JavaScript 相关方法。关键是第一种，HTML5 规范中新增一个 onpopstate 事件，通过它便可以监听到前进或后退按钮的点击。
+第 2、3 种情况可视为同类型场景，因为 `<a>` 标签的默认事件可以被禁止，进而使用 JavaScript 相关方法。关键是第一种，HTML5 规范中新增一个 `onpopstate` 事件，通过它便可以监听到前进或后退按钮的点击。
 
-需要特别注意的是：调用 `history.pushState` 和 `history.replaceState` 并不会触发 onpopstate 事件。
+需要特别注意的是：调用 `history.pushState` 和 `history.replaceState` 并不会触发 `onpopstate` 事件。
 
 ## 总结归纳
 
@@ -144,7 +146,7 @@ history.popstate;
 两种实现方式的对比：
 
 | History 路由                 | Hash 路由                               |
-| ---------------------------- | --------------------------------------- |
+| :--------------------------- | :-------------------------------------- |
 | 可设置同源 URL 的任意路径    | 只可设置同源 URL 的 `#` 后面部分        |
 | URL 相同也会添加记录到栈中   | 只有 Hash 值变化才会触发 `onhashchange` |
 | 可以添加任意类型数据到记录中 | 只可添加短字符                          |

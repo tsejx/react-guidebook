@@ -20,9 +20,7 @@ Mobx 主要有以下几个核心特性：
 - Reactions（反应，完成页面渲染、日志打印）
 - Actions（动作）
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📖 Github Mobx.js](https://github.com/mobxjs/mobx)
 - [📝 我为什么从 Redux 迁移到了 Mobx](https://tech.youzan.com/mobx_vs_redux/)

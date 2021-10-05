@@ -76,14 +76,13 @@ Reducer（也称为 reducing function）函数接受两个参数：**之前已�
 Reducer 的概念来自于是函数式编程，很多语言中都有 `reduce` API。如在 JavaScript 中：
 
 ```js
-[{x:1},{y:2},{z:3}].reduce(function(prev, next){
-    return Object.assign(prev, next);
-})
+[{ x: 1 }, { y: 2 }, { z: 3 }].reduce(function (prev, next) {
+  return Object.assign(prev, next);
+});
 //return {x:1, y:2, z:3}
 ```
 
 在 dva 中，reducers 聚合积累的结果是当前 model 的 state 对象。通过 actions 中传入的值，与当前 reducers 中的值进行运算获得新的值（也就是新的 state）。需要注意的是 Reducer 必须是 [纯函数](https://github.com/MostlyAdequate/mostly-adequate-guide/blob/master/ch3.md)，所以同样的输入必然得到同样的输出，它们不应该产生任何副作用。并且，每一次的计算都应该使用 [immutable data](https://github.com/MostlyAdequate/mostly-adequate-guide/blob/master/ch3.md#reasonable)，这种特性简单理解就是每次操作都是返回一个全新的数据（独立，纯净），所以热重载和时间旅行这些功能才能够使用。
-
 
 ### Effect
 
@@ -119,11 +118,11 @@ dva 实例提供了 router 方法来控制路由，使用的是 [react-router](h
 ```jsx | pure
 import { Router, Route } from 'dva/router';
 
-app.router(({history}) =>
+app.router(({ history }) => (
   <Router history={history}>
     <Route path="/" component={HomePage} />
   </Router>
-);
+));
 ```
 
 ### Route Component
@@ -134,9 +133,7 @@ Route Components
 
 所以在 dva 中，通常需要 `connect` Model 的组件都是 Route Components，组织在 `/routes/` 目录下，而 `/components/` 目录下则是纯组件（Presentational Components）。
 
----
-
-**参考资料：**
+## 参考资料
 
 - [Dva Documentation](https://dvajs.com/)
 - [dva 介绍](https://github.com/dvajs/dva/issues/1)

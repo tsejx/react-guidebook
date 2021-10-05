@@ -114,19 +114,19 @@ MyContext.displayName = 'MyDisplayName';
 
 对于上述的 theme 例子，使用动态值（dynamic values）后更复杂的用法：
 
-<code src="../../demo/context/dynamic-context/index" />
+<code src="../../../demo/context/dynamic-context/index" />
 
 ### 嵌套组件
 
 从一个在组件树中嵌套很深的组件中更新 Context 是很有必要的。在这种场景下，你可以通过 context 传递一个函数，使得 `<Cosumer>` 组件更新 context：
 
-<code src="../../demo/context/nested-component/index" />
+<code src="../../../demo/context/nested-component/index" />
 
 ### 消费多个 Context
 
 为了确保 context 快速进行重渲染，React 需要使每一个 consumers 组件的 context 在组件树中称为一个单独的节点。
 
-<code src="../../demo/context/consume-contextes/index" />
+<code src="../../../demo/context/consume-contextes/index" />
 
 那么看了上面的例子，我们是否可以直接使用 Context API 来代替掉所有的数据传递，包括去掉 Redux 这些数据同步 library 了？其实并不合适。前面也有提到，Context API 应该用于需要全局共享数据的场景，并且数据最好是不用频繁更改的。因为作为上层存在的 Context，在数据变化时，容易导致所有涉及的 Consumer 重新 render。
 

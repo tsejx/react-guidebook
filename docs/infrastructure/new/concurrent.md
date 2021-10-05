@@ -68,13 +68,13 @@ const channel = new MessageChannel();
 const port1 = channel.port1;
 const port2 = channel.port2;
 
-port1.onmessage = e => {
+port1.onmessage = (e) => {
   console.log(e.data);
 };
 port2.postMessage('from port2');
 console.log('after port2 postMessage');
 
-port2.onmessage = e => {
+port2.onmessage = (e) => {
   console.log(e.data);
 };
 port1.postMessage('from port1');
@@ -199,7 +199,7 @@ React.unstable_scheduleCallback(priorityLevel, callback, { timeout: <number> })
 
 ```js
 handleButtonClick = () => {
-  this.setState(prevState => ({ count: prevState.count + 2 }));
+  this.setState((prevState) => ({ count: prevState.count + 2 }));
 };
 ```
 
@@ -350,27 +350,12 @@ function ceiling(num, unit) {
 
 ### 过期时间
 
-
 ## 源码实探
 
 写到此处，不知不觉已经过了好几天。对于源码展现这一块，也有了不同的打算。之前计划纯用流程图展现。但因为涉及关键代码量大，流程图不是很适用。所以这次直接用流程叙述+相关源码，直观的实现原理对应源码。
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-**参考资料：**
+## 参考资料
 
 - [彻底搞懂 React 源码调度原理（Concurrent 模式）](https://mp.weixin.qq.com/s/pFfpv0-KGmGqtKkm6UZKeg) 未看完
-
-[React Concurrent 模式抢先预览上篇：Suspense the world](https://juejin.im/post/5db65d87518825648f2ef899)
-[精读《Shceduling in React》](https://juejin.im/post/5cb3d81e6fb9a068af37a564)
+- [React Concurrent 模式抢先预览上篇：Suspense the world](https://juejin.im/post/5db65d87518825648f2ef899)
+- [精读《Shceduling in React》](https://juejin.im/post/5cb3d81e6fb9a068af37a564)

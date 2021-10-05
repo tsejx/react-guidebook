@@ -23,10 +23,10 @@ React Router v4 基于 Lerna 管理多个 Repository
 
 ## 插件初插入
 
-- react-router
-- react-router-dom 比前者多了 `<Link>` `<BrowserRouter>` 这样的 DOM 类组件
+- [react-router](https://github.com/remix-run/react-router/tree/main/packages/react-router)
+- [react-router-dom](https://github.com/remix-run/react-router/tree/main/packages/react-router-dom) 比前者多了 `<Link>` 和 `<BrowserRouter>` 这样的 DOM 类组件
 
-如果搭配 Redux 还需要 `react-router-redux`
+如果搭配 Redux 还需要 [react-router-redux](https://github.com/reactjs/react-router-redux)
 
 ## 基本组件
 
@@ -36,11 +36,11 @@ React Router v4 基于 Lerna 管理多个 Repository
 
 ### Router
 
-Router 时所有路由组件共用的底层接口，一般我们的应用不会使用这个接口，而是使用高级的路由
+Router 是所有路由组件共用的底层接口，一般我们的应用不会使用这个接口，而是使用高级的路由
 
-- `<BrowserRouter/>` 使用 HTML5 提供的 history API 保持 UI 和 URL 同步
+- `<BrowserRouter/>` 使用 HTML5 提供的 History API 保持 UI 和 URL 同步
 - `<HashRouter/>` 使用 URL 的 hash 保持 UI 和 URL 的同步
-- `<MemoryRouter>` 能在内存保存你 "URL" 的历史记录（并没有地址栏读写）
+- `<MemoryRouter>` 能在内存保存你 URL 的历史记录（并没有地址栏读写）
 - `<NativeRouter>` 为使用 React Native 提供路由支持
 - `<StaticRouter>` 从不会改变地址
 
@@ -54,57 +54,63 @@ Router 时所有路由组件共用的底层接口，一般我们的应用不会�
 `<Route>` 组件有如下属性：
 
 | 属性   | 说明                                                            | 类型   |
-| ------ | --------------------------------------------------------------- | ------ |
-| path   | 路由匹配路径（没有 path 属性的 `<Route>` 总是会匹配）           | string |
+| :----- | :-------------------------------------------------------------- | :----- |
+| path   | 路由匹配路径（没有 `path` 属性的 `<Route>` 总是会匹配）         | string |
 | exact  | 为 `true` 时，则要求路径与 `location.pathname` 必须**完全匹配** | bool   |
 | strict | 为 `true` 的时候，有**结尾斜线**的路径只能匹配有斜线的          | bool   |
 
 **exact 配置：**
 
-| 路径 | location.pathname | exact | 是否匹配 |
-| ---- | ----------------- | ----- | -------- |
-| /one | /one/two          | true  | 否       |
-| /one | /one/two          | false | 是       |
+| 路径   | location.pathname | exact   | 是否匹配 |
+| :----- | :---------------- | :------ | :------- |
+| `/one` | `/one/two`        | `true`  | 否       |
+| `/one` | `/one/two`        | `false` | 是       |
 
 **strict 配置：**
 
-| 路径  | location.pathname | strict | 是否匹配 |
-| ----- | ----------------- | ------ | -------- |
-| /one/ | /one              | true   | 否       |
-| /one/ | /one/             | true   | 是       |
-| /one/ | /one/two          | true   | 是       |
+| 路径    | location.pathname | strict | 是否匹配 |
+| :------ | :---------------- | :----- | :------- |
+| `/one/` | `/one`            | `true` | 否       |
+| `/one/` | `/one/`           | `true` | 是       |
+| `/one/` | `/one/two`        | `true` | 是       |
 
-路由匹配是通过将 `<Route>` 组件的 path 属性与当前的 location 的 pathname 进行比较来完成的。当一个 `<Route>` 匹配了，它所对应的组件内容将被渲染出来。 不匹配，则渲染 null。如果一个 `<Route>` 没有 path 属性，他的组件对应内容将一直被渲染出来。
+路由匹配是通过将 `<Route>` 组件的 `path` 属性与当前的 `location` 的 `pathname` 进行比较来完成的。
 
-```js
+- 当一个 `<Route>` 匹配了，它所对应的组件内容将被渲染出来
+- 不匹配，则渲染 `null`
+- 如果一个 `<Route>` 没有 `path` 属性，他的组件对应内容将一直被渲染出来
+
+```jsx | pure
 // 当 location = { pathname: '/about' }
 
 // 路径匹配成功，渲染 <About/> 组件
-// <Route path='/about' component={About}/>
+<Route path='/about' component={About}/>
+
 // 路径不匹配，渲染 null
-// <Route path='/contact' component={Contact}/>
+<Route path='/contact' component={Contact}/>
+
 // 该组件没有path属性，其对应的 <Always/> 组件会一直渲染
-// <Route component={Always}/>
+<Route component={Always}/>
 ```
 
-我们可以在组件树的任何位置放置 `<Route>` 组件。但是更常见的情况是将几个 `<Route>` 写在一起。`<Switch>` 组件可以用来将多个 `<Route>` 包裹”在一起。
+我们可以在组件树的任何位置放置 `<Route>` 组件。但是更常见的情况是将几个 `<Route>` 写在一起。`<Switch>` 组件可以用来将多个 `<Route>` 包裹在一起。
 
 多个组件在一起使用时，并不强制要求使用 `<Switch>` 组件，但是使用 `<Switch>` 组件却是非常便利的。`<Switch>` 会迭代它下面的所有 `<Route>` 子组件，并只渲染第一个路径匹配的 `<Route>`。
 
-```js
-// <Switch>
-//   <Route exact path="/" component={Home} />
-//   <Route path="/about" component={About} />
-//   <Route path="/contact" component={Contact} />
-// </Switch>
+```jsx | pure
+<Switch>
+  <Route exact path="/" component={Home} />
+  <Route path="/about" component={About} />
+  <Route path="/contact" component={Contact} />
+</Switch>
 
-// <Switch>
-//   <Route exact path="/" component={Home} />
-//   <Route path="/about" component={About} />
-//   <Route path="/contact" component={Contact} />
-//   {/* 如果上面的Route的路径都没有匹配上，则 <NoMatch>被渲染，我们可以在此组件中返回404 */}
-//   <Route component={NoMatch} />
-// </Switch>
+<Switch>
+  <Route exact path="/" component={Home} />
+  <Route path="/about" component={About} />
+  <Route path="/contact" component={Contact} />
+  {/* 如果上面的Route的路径都没有匹配上，则 <NoMatch>被渲染，我们可以在此组件中返回404 */}
+  <Route component={NoMatch} />
+</Switch>
 ```
 
 ### Route Rendering Props
@@ -147,10 +153,10 @@ render 方法直接使用一个内联函数来渲染内容。
 ### History 实现
 
 ```jsx | inline
-import React from 'react'
-import img from '../../assets/react-router-workflow.png'
+import React from 'react';
+import img from '../../assets/react-router-workflow.png';
 
-export default () => <img alt="React Router Workflow" src={img} width={640} />
+export default () => <img alt="React Router Workflow" src={img} width={640} />;
 ```
 
 ---

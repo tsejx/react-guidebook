@@ -18,10 +18,10 @@ order: 1
 Flux 的核心就是一个简单的约定：视图层组件不允许直接修改应用状态，只能触发 action。应用的状态必须独立出来放到 store 里面统一管理，通过侦听 action 来执行具体的状态操作。
 
 ```jsx | inline
-import React from 'react'
-import img from '../../assets/flux-diagram.png'
+import React from 'react';
+import img from '../../assets/flux-diagram.png';
 
-export default () => <img src={img} width={640} />
+export default () => <img src={img} width={640} />;
 ```
 
 **单向数据流**是 Flux 架构的核心设计。
@@ -66,8 +66,8 @@ Dispatcher 调用已注册的回调（callback）->
 
 Dispatcher（派发器）的用途就是把接收到 actionType 与数据（payload），广播给所有注册的 callbacks。它这个设计并非是独创的，这在设计模式中类似于 pub-sub（发布-订阅）系统，Dispatcher 则是类似于 Eventbus 的概念。Dispatcher 类的设计很简单，其中有两个核心的方法，这两个是互为相关的函数：
 
-* `dispatch`：发送 payload（相当于动作）给所有注册的 callbacks。组件触发事件时用这个方式来发送动作。
-* `register`：注册在所有 payload（相当于动作）发送时要调用的 callbacks（回调）。这些 callbacks（回调）就是上面说的会用来更改 store 的 Store Queries（存储查询）。
+- `dispatch`：发送 payload（相当于动作）给所有注册的 callbacks。组件触发事件时用这个方式来发送动作。
+- `register`：注册在所有 payload（相当于动作）发送时要调用的 callbacks（回调）。这些 callbacks（回调）就是上面说的会用来更改 store 的 Store Queries（存储查询）。
 
 每个 Store 注册它自己并提供一个回调函数。当 Dispatcher 响应 Action 时，通过已注册的回调函数，将 Action 提供的数据负载（Payload）发送给应用中的所有 Store。
 
@@ -116,9 +116,7 @@ View 所有的数据来源只应该是从属性中传递过来的，View 的所�
 
 对单个应用而言 Dispatcher 是单例的，最主要的是 Dispatcher 是数据的分发中心，所有的数据都需要流经 Dispatcher，Dispatcher 管理不同 Action 与 Store 之间的关系。因为所有数据都必须在 Dispatcher 调度，基于此我们可以做很多事情，各种 Debug 工具、动作回滚、日志记录甚至权限拦截之类的都是可以的。
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📝 Flux 架构简介](https://www.jdon.com/idea/flux.html)
 - [📝 阮一峰：Flux 架构入门教程](http://www.ruanyifeng.com/blog/2016/01/flux.html)

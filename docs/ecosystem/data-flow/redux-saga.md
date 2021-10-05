@@ -39,22 +39,22 @@ Sagas 不同于 Thunks，Thunks 是在 `action` 被创建时调用，而 Sagas �
 **sagas.js**
 
 ```js
-import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
-import Api from './api'
+import { call, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import Api from './api';
 
 // Worker Saga：将 USER_FETCH_REQUESTED action 被 dispatch 时调用
-function * fetchUser(action) {
+function* fetchUser(action) {
   try {
-    const user = yield call(Api.fetchUser, action.payload.userId)
-    yield put({ type: 'USER_FETCH_SUCCEEDED', user: user })
+    const user = yield call(Api.fetchUser, action.payload.userId);
+    yield put({ type: 'USER_FETCH_SUCCEEDED', user: user });
   } catch (err) {
-    yield put({ type: 'USER_FETCH_FAILED, message: e.message' })
+    yield put({ type: 'USER_FETCH_FAILED, message: e.message' });
   }
 }
 
 // 在每个 USER_FETCH_REQUESTED action 被 dispatch 时调用 fetchUser
 // 允许并发（即同时处理多个相同的 action）
-function * saga () {
+function* saga() {
   yield takeEvery('USER_FETCH_REQUESTED', fetchUser);
 }
 
@@ -62,7 +62,7 @@ function * saga () {
 // 不允许并发，disaptch 一个 USER_FETCH_REQUESTED action 时
 // 如果在这之前已经有一个 USER_FETCH_REQUESTED action 在处理中
 // 那么处理中的 action 会被取消，只会执行当前的
-function * saga () {
+function* saga() {
   yield takeLatest('USER_FETCH_REQUESTED', fetchUser);
 }
 
@@ -72,23 +72,20 @@ export default saga;
 **main.js**
 
 ```js
-import { createStore, applyMiddleware } from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import { createStore, applyMiddleware } from 'redux';
+import createSagaMiddleware from 'redux-saga';
 
-import reducer from './reducers'
-import saga from './sagas'
+import reducer from './reducers';
+import saga from './sagas';
 
 // 创建 Redux Saga 中间件
-const sagaMiddleware = createSagaMiddleware()
+const sagaMiddleware = createSagaMiddleware();
 
 // 挂载在 Redux Store 上
-const store = createStore(
-  reducer,
-  applyMiddleware(sagaMiddleware)
-)
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 
 // 执行 Saga
-sagaMiddleware.run(saga)
+sagaMiddleware.run(saga);
 
 // 渲染应用
 ```
@@ -104,28 +101,28 @@ Sagas 都是 Generator 函数实现，可以用 `yield` 对 JavaScript 对象来
 
 ```js
 // 官方例子
-import { takeEvery } from 'redux-saga/effects'
-import Api from './path/to/api'
+import { takeEvery } from 'redux-saga/effects';
+import Api from './path/to/api';
 
 // 监听如果有一个调用 PRODUCTS_REQUESTED 的 action 的话,就会匹配到第二个参数所代表的 effect
 function* watchFetchProducts() {
-  yield takeEvery('PRODUCTS_REQUESTED', fetchProducts)
+  yield takeEvery('PRODUCTS_REQUESTED', fetchProducts);
 }
 
 // 执行，获取数据
 // 使用 Generator 调用了 Api.fetch，在 Generator 函数中，yield 右面的任何表达式都会被求值，结果会被 yield 给调用者
 function* fetchProducts() {
-  const products = yield Api.fetch('/products')
-  console.log(products)
+  const products = yield Api.fetch('/products');
+  console.log(products);
 }
 
 // 第二种方式
-import { call } from 'redux-saga/effects'
+import { call } from 'redux-saga/effects';
 // call(fn, ...args) 这个函数。与前面的例子不同的是，现在我们不立即执行异步调用
 // 相反，call 创建了一条描述结果的信息就像在 Redux 里你使用 action 创建器，创建一个将被 Store 执行的、描述 action 的纯文本对象
 // call 创建一个纯文本对象描述函数调用。redux-saga middleware 确保执行函数调用并在响应被 resolve 时恢复 generator
 function* fetchProducts() {
-  const products = yield call(Api.fetch, '/products')
+  const products = yield call(Api.fetch, '/products');
   // do something
 }
 ```
@@ -164,9 +161,7 @@ function* fetchProducts() {
 - External API
   - `runSaga(iterator, {subscribe, dispatch, getState}, [monitor])`：允许在 Redux middleware 环境外部启动 sagas。当你想将 Saga 连接至外部的输入和输出时，而不是 Store 的 action，会很有用。
 
----
-
-**参考资料：**
+## 参考资料
 
 - [Redux-Saga 中文文档](https://chenyitian.gitbooks.io/redux-saga/content/)
 - [redux-saga 化异步为同步](https://mp.weixin.qq.com/s?__biz=MzA4NjcyMDYzMg==&mid=2451805550&idx=1&sn=84c84d73789b960f845515d701a6e0d2&chksm=88135c79bf64d56fb27009192ec3d724645a1d375b9006b7c09bad0a2aa1a3446f823e90d928&scene=0&xtrack=1)

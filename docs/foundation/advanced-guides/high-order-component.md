@@ -30,7 +30,7 @@ order: 4
 ```jsx | pure
 import React from 'react';
 
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends Component {
     render() {
       return <WrapperdComponent {...this.props} />;
@@ -51,7 +51,7 @@ const MyContainer = WrappedComponent =>
 ```js
 import React from 'react';
 
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends React.Component {
     render() {
       const newProps = {
@@ -71,7 +71,7 @@ const MyContainer = WrappedComponent =>
 ```js
 import React from 'react';
 
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends React.Component {
     proc(wrappedComponentInstance) {
       wrappedComponentInstantce.mdethod();
@@ -89,14 +89,14 @@ const MyContainer = WrappedComponent =>
 
 ### 抽象状态
 
-我们可以通过原组件（WrappedComponent）提供的 `props` 和回调函数抽象 State。
+我们可以通过原组件（WrappedComponent）提供的 `props` 和回调函数抽象 `state`。
 
 高阶组件可以将原组件抽象为展示型组件，分离内部状态。
 
 ```js
 import React from 'react';
 
-const MyContainer = WrappedCompoenent =>
+const MyContainer = (WrappedCompoenent) =>
   class extends React.Component {
     constructor(props) {
       super(props);
@@ -123,13 +123,11 @@ const MyContainer = WrappedCompoenent =>
 ```
 
 ```js
-const nameInput = props => (<input name='name' {...props}) />)
-export default MyContainer(nameInput);
+const namedInput = props => (<input name='name' {...props}) />)
+export default MyContainer(namedInput);
 ```
 
-在这个例子中，我们把 `input` 组件中对 `name prop` 的 `onChange` 方法提取到高阶组件中，这样
-
-就有效地抽象了同样的状态操作。
+在这个例子中，我们把 `input` 组件中对 `name prop` 的 `onChange` 方法提取到高阶组件中，这样就有效地抽象了同样的状态操作。
 
 ### 包裹组件
 
@@ -161,7 +159,7 @@ const MyContainer = (WrappedCompoennt) =>
 🌰 **示例：**
 
 ```js
-const MyContainer = WrappedCompoenent =>
+const MyContainer = (WrappedCompoenent) =>
   class extends WrappedComponent {
     render() {
       return super.render();
@@ -192,7 +190,7 @@ didmount => HOC didmount => (HOCs didmount) => will unmount => HOC will unmount 
 🌰 **示例：条件渲染**
 
 ```js
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends WrappedComponent {
     render() {
       if (this.props.loggedIn) {
@@ -211,7 +209,7 @@ const MyContainer = WrappedComponent =>
 🌰 **示例：修改渲染**
 
 ```js
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends WrappedComponent {
     render() {
       const elementsTree = super.render();
@@ -228,10 +226,10 @@ const MyContainer = WrappedComponent =>
 
 ### 操作状态
 
-高阶组件可以读取、修改或删除原组件 WrappedComponent 实例中的 State，如果需要的话，也可以增加 State。但这样做，可能会使原组件 WrappedComponent 内部状态变得难以追踪，不易维护。大部分的高阶组件都应该限制读取或增加 State，尤其是后者，可以通过重新命名 State，以防止混淆。
+高阶组件可以读取、修改或删除原组件 WrappedComponent 实例中的 `state`，如果需要的话，也可以增加 `state`。但这样做，可能会使原组件 WrappedComponent 内部状态变得难以追踪，不易维护。大部分的高阶组件都应该限制读取或增加 `state`，尤其是后者，可以通过重新命名 `state`，以防止混淆。
 
 ```js
-const MyContainer = WrappedComponent =>
+const MyContainer = (WrappedComponent) =>
   class extends WrappedComponent {
     render() {
       return (
@@ -285,7 +283,7 @@ const auth = (WrappedComponent) => {
 **性能监控**：包裹组件的生命周期，进行统一埋点。
 
 ```js
-const performance = WrappedComponent => {
+const performance = (WrappedComponent) => {
   return class extends WrappedComponent {
     constructor(props) {
       super(props);
@@ -320,3 +318,4 @@ const performance = WrappedComponent => {
 - [📝 中高级前端大厂面试秘籍](https://juejin.im/post/5c92f499f265da612647b754)
 - [📝 从 0 到 1 实现 React 系列—— HOC 探秘](https://juejin.im/post/5b837692f265da434015865a)
 - [📝 深入理解 React 高阶组件](https://zhuanlan.zhihu.com/p/49485308)
+- [📝 HOC 真的就那么高级吗？你可知道还能这么玩](https://juejin.cn/post/6872501583607758855)

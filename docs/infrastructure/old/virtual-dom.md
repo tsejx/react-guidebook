@@ -3,8 +3,8 @@ nav:
   title: 架构
   order: 2
 group:
-  title: 虚拟 DOM 层
-  order: 1
+  title: 旧版架构
+  order: 5
 title: Virtual DOM
 order: 1
 ---
@@ -80,7 +80,7 @@ function Element(tagName, props, children) {
   this.children = children;
 }
 
-module.exports = function(tagName, props, children) {
+module.exports = function (tagName, props, children) {
   return new Element(tagName, props, children);
 };
 ```
@@ -100,7 +100,7 @@ var ul = el('ul', { id: 'list' }, [
 现在 `ul` 只是一个 JavaScript 对象表示的 DOM 结构，页面上并没有这个结构。我们可以根据这个 `ul` 构建真正的 `<ul>` 标签：
 
 ```js
-Element.prototype.render = function() {
+Element.prototype.render = function () {
   // 根据 tagName 构建
   var el = document.creatElement(this.tagName);
   var props = this.props;
@@ -113,7 +113,7 @@ Element.prototype.render = function() {
 
   var children = this.children || [];
 
-  children.forEach(function(child) {
+  children.forEach(function (child) {
     // 如果子节点也是虚拟 DOM，则递归构建 DOM 节点
     var childEl = child instanceof Element ? child.render() : document.createTextNode(child); // 如果字符串,只构建文本节点
     el.appendChild(childEl);
@@ -156,17 +156,17 @@ DOM 是多叉树的结构，如果需要完整的对比两棵树的差异，那�
 - 一旦节点有子元素，就去判断子元素是否有不同
 
 ```jsx | inline
-import React from 'react'
-import img from '../../assets/virtual_dom_1.jpg'
+import React from 'react';
+import img from '../../assets/virtual_dom_1.jpg';
 
-export default () => <img alt="VirtualDOM：同层级元素比对" src={img} width={640} />
+export default () => <img alt="VirtualDOM：同层级元素比对" src={img} width={640} />;
 ```
 
 ```jsx | inline
-import React from 'react'
-import img from '../../assets/virtual_dom_2.jpg'
+import React from 'react';
+import img from '../../assets/virtual_dom_2.jpg';
 
-export default () => <img alt="深度优先遍历，记录差异" src={img} width={640} />
+export default () => <img alt="深度优先遍历，记录差异" src={img} width={640} />;
 ```
 
 #### 树的递归
@@ -287,7 +287,7 @@ function listDiff(oldList, newList, index, patches) {
   // 再去判断一遍
   let list = [];
   oldList &&
-    oldList.forEach(item => {
+    oldList.forEach((item) => {
       let key = item.key;
       if (isString(item)) {
         key = item;
@@ -350,7 +350,7 @@ function getKeys(list) {
   let keys = [];
   let text;
   list &&
-    list.forEach(item => {
+    list.forEach((item) => {
       let key;
       if (isString(item)) {
         key = [item];
@@ -432,12 +432,12 @@ export default function patch(node, patchs) {
 
 function changeDom(node, changes, noChild) {
   changes &&
-    changes.forEach(change => {
+    changes.forEach((change) => {
       let { type } = change;
       switch (type) {
         case StateEnums.ChangeProps:
           let { props } = change;
-          props.forEach(item => {
+          props.forEach((item) => {
             if (item.value) {
               node.setAttribute(item.prop, item.value);
             } else {

@@ -13,13 +13,13 @@ order: 1
 
 React Hook 是一种复用状态逻辑的方式。
 
-在 Hooks 出现之前，开发 React 组件主要是 Class 组件和函数组件。函数组件没有 `state`，所以也叫SFC（stateless functional component），简单的将 `props` 映射成 `view`；Class 组件有 `state`，能够处理更加复杂的逻辑。
+在 Hooks 出现之前，开发 React 组件主要是类组件和函数组件。函数组件没有 `state`，所以也叫 SFC（stateless functional component），简单的将 `props` 映射成 `view`；Class 组件有 `state`，能够处理更加复杂的逻辑。
 
 但是基于 Class 的组件并非完美，主要有以下三个主要的问题：
 
 - **代码复用：在组件之间复用状态逻辑很难**
 
-React 没有提供将可复用性行为附加到组件的途径。解决这类问题的现行方案是使用 高阶组件和 `render props`。
+React 没有提供将可复用性行为附加到组件的途径。解决这类问题的现行方案是使用高阶组件和 `render props`。
 
 但是这类解决方案需要重新组织你的组件结构，`providers`、`consumers`、高阶组件和 `render props` 等其他抽象层组成的组件也会形成组件的嵌套地狱。
 
@@ -51,7 +51,7 @@ Hook 使你在非 Class 情况下使用更多的 React 特性。
 
 ## 原则
 
-- 只在最顶层使用 Hook：不要在循环、条件或嵌套函数中调用 Hook
+- 只在函数组件的最顶层作用域使用 Hook：不要在循环、条件或嵌套函数中调用 Hook
 - 只在 React 函数中调用 Hook：不要在普通的 JavaScript 函数中调用 Hook
 
 ## 自定义 Hook

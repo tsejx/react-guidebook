@@ -5,8 +5,8 @@ nav:
 group:
   title: 内部组件层
   order: 2
-title: 协调
+title: Reconciliation
 order: 10
 ---
 
-# 协调
+# Reconciliation

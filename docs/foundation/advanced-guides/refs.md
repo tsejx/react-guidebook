@@ -11,13 +11,109 @@ order: 6
 
 # Refs
 
-React 的核心思想是每次对于变更 `props` 或 `state`，触发新旧 Virtual DOM 进行 diff（协调算法），对比出变化的地方，然后通过 render 重新渲染界面。
+`Refs` 在计算机中称为弹性文件系统（英语：Resilient File System，简称 ReFS）。
 
-而 Refs 为我们提供了一种绕过状态更新和重新渲染时访问元素的方法，这在某些用例中很有用，但不应该作为 `props` 和 `state` 的替代方法。
+React 的核心思想是每次对于变更 `props` 或 `state`，触发新旧 Virtual DOM 进行 diff（协调算法），对比出变化的地方，然后通过 `render` 重新渲染界面。而 Refs 为我们提供了一种绕过状态更新和重新渲染时访问元素的方法，这在某些用例中很有用，但不应该作为 `props` 和 `state` 的替代方法。
 
 在项目开发中，如果我们可以使用声明式或提升 `state` 所在的组件层级（状态提升）的方法来更新组件，最好不要使用 refs。
 
-## 使用场景
+## 创建方式
+
+- 传入字符串，使用时通过 `this.refs` 传入的字符串的格式获取对应的元素
+- 传入对象，对象是通过 `React.createRef()` 方式创建出来，使用时获取到创建的对象中存在 `current` 属性就是对应的元素
+- 传入函数，该函数会在 DOM 被挂载时进行回调，这个函数会传入一个元素对象，可以自己保存，使用时，直接拿到之前保存的元素对象即可
+- 传入 Hook，Hook 通过 `useRef()` 方式创建，使用时通过生成 Hook 对象的 `current` 属性就是对应的元素
+
+### 传入字符串
+
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  render() {
+    return <div ref="myref"></div>;
+  }
+}
+```
+
+访问当前节点的方式如下：
+
+```js
+this.refs.myref.innerHTML = 'hello';
+```
+
+### 传入对象
+
+`refs` 通过 `React.createRef()` 创建，然后将 `ref` 属性添加到 React 元素中：
+
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  render() {
+    return <div ref={this.myRef} />;
+  }
+}
+```
+
+当 `ref` 被传递给 `render` 中的元素时，对该节点的引用可以在 `ref` 的 `current` 属性中访问。
+
+```js
+const node = this.myRef.current;
+```
+
+### 传入函数
+
+当 `ref` 传入为一个函数的时候，在渲染过程中，回调函数参数会传入一个元素对象，然后通过过实例将对象进行保存。
+
+```js
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  render() {
+    return <div ref={(element) => (this.myref = element)}></div>;
+  }
+}
+```
+
+获取 `ref` 对象只需要通过先前存储的对象即可。
+
+```js
+const node = this.myref;
+```
+
+### 传入 Hook
+
+通过 `useRef` 创建一个 `ref`，整体使用方式与 `React.createRef` 一致。
+
+```js
+function App(props) {
+  const myref = useRef();
+  return (
+    <>
+      <div ref={myref}></div>
+    </>
+  );
+}
+```
+
+获取 `ref` 属性也是通过 Hook 对象的 `current` 属性
+
+```js
+const node = myref.current;
+```
+
+上述三种情况都是 `ref` 属性用于原生 HTML 元素上，如果 `ref` 设置的组件为一个类组件的时候，`ref` 对象接收到的是组件的挂载实例。
+
+注意的是，不能在函数组件上使用 `ref` 属性，因为他们并没有实例。
+
+## 应用场景
 
 - **管理焦点（如文本选择）或处理表单数据**：`refs` 将管理文本框当前焦点选中，或文本框其它属性。
 
@@ -30,7 +126,7 @@ class Form extends React.Component {
     this.input = React.createRef();
   }
 
-  handleSubmit = e => {
+  handleSubmit = (e) => {
     console.log('A name was submitted: ' + this.input.current.value);
     e.preventDefault();
   };
@@ -52,34 +148,15 @@ class Form extends React.Component {
 因为非受控组件将真实数据储存在 DOM 节点中，所以再使用非受控组件时，有时候反而更容易同时集成 React 和非 React 代码。如果你不介意代码美观性，并且希望快速编写代码，使用非受控组件往往可以减少你的代码量。非欧泽，你应该使用受控组件。
 
 - **媒体播放**：基于 Reac 的音乐或视频播放器可以利用 Refs 来管理其当前状态（播放/咱 ing）。或管理播放进度等。这些更新不需要进行状态管理。
-
 - **触发强制动画**：如果要在元素上触发过强制动画时，可以使用 Refs 来执行此操作
-
 - **集成第三方 DOM 库**
-
-## 实用价值
-
-推出 [createRef](../../api-reference/react/create-ref) 与 [forwardRef](../../api-reference/react/forward-ref), 这是解决 `refs` 对象的原罪。React 会产生元素节点，但如果获得元素节点的引用是一个难题，于是推出了 `string ref` 与 `function ref`。`string ref` 有重大缺点，一个 `div` 需要知道是哪个组件 `render` 了自己，于是内部就有一个叫 `currentOwner` 的全局对象，每当组件实例化后，就把实例放到这上面，当下面的 `div`, `span` 在执行 `React.createElement(div/span, props, ...children)` 时，`currentOwner` 会神不知鬼不觉到混进内部，作为 ReactElement 的第 6 个参数`owner`。React.createElement 只是 `ReactElement` 的外壳，一个加工厂，ReactElement 的返回值才是我们熟悉的虚拟 DOM 。但 `currentOwner.current` 会改来改去，并且针对一些恶心情况做了许多补丁。随着 React 以后会考虑 `WebWorker` 方式进行更新，这全局的东西肯定是障碍。于是有了 `createRef`，返回一个 `object ref`，直接能拿到引用，它能早于组件诞生，方便用户操作。`forwardRef` 是用来指定 `object ref` 的活动范围。当然这东西与 HOC 也有关，这个有机会也再分享详述。总之，`ref` 与 `context` 一样，从组件中解耦出来。
 
 ## 注意事项
 
-Refs 用于访问在渲染周期函数中创建的 DOM 节点或 React 元素。
-
-⚠️ **注意事项**：避免对任何可以声明式解决的问题使用 Refs！
-
-- 当两个虚拟 DOM 的 `ref` 不同时，就会触发 `change ref`，这会在 `did.xx` 之前
-- `set ref` 也在 `did.xx` 之后，当一个组件被移除，他的虚拟 DOM 恰好有 `ref`
-- 那么它在 `willUnmount` 之前 `getDerivedStateFromProps` 与 `componentDidCatch` 钩子不齐同，漏了 三大 `willXXX` 钩子与 `getXXX` 一直共存着的
-
-为防止内存泄漏，当写在一个组件的时候，组件里所有的 `ref` 就会变为 `null`。
-
-值得注意的是，`React.findDOMNode` 和 `refs` 都无法用于无状态组件中。因为，无状态组件挂载时只是方法调用，并没有创建实例。
-
-对于 React 组件来讲，`refs` 会指向一个组件类实例，所以可以调用该类定义的任何方法。如果需要访问该组件的真实 DOM，可以用 `ReactDOM.findDOMNode` 来找到 DOM 节点，但并不推荐这样做，因为这大部分情况下都打破了封装性，而且通常都能用更清晰的方法在 React 中构建代码。
-
-## 原理机制
-
-React 将会在组件挂载时将 DOM 元素分配给 `current` 属性，并且在组件被卸载时，将 `current` 属性重置为 `null`。`ref` 将会在 `componentDidMount` 和 `componentDidUpdate` 生命中器钩子前被更新。
+- React 将会在组件挂载时将 DOM 元素分配给 `current` 属性，并且为防止内存泄漏，在组件被卸载时，将 `current` 属性重置为 `null`
+- `ref` 将会在 `componentDidMount` 和 `componentDidUpdate` 生命中器钩子前被更新
+- `React.findDOMNode` 和 `refs` 都无法用于无状态组件中。因为，无状态组件挂载时只是方法调用，并没有创建实例。
+- 对于 React 组件来讲，`refs` 会指向一个组件类实例，所以可以调用该类定义的任何方法。如果需要访问该组件的真实 DOM，可以用 `ReactDOM.findDOMNode` 来找到 DOM 节点，但并不推荐这样做，因为这大部分情况下都打破了封装性，而且通常都能用更清晰的方法在 React 中构建代码。
 
 ---
 
