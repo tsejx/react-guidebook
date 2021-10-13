@@ -25,7 +25,8 @@
   "license": "MIT",
   "homepage": "https://github.com/tsejx/React-GuideBook#readme",
   "devDependencies": {
-    "dumi": "^1.1.24",
-    "lint-md": "^0.1.1"
+    "dumi": "^1.1.30",
+    "lint-md": "^0.1.1",
+    "typescript": "^4.4.4"
   }
 }
