@@ -1,41 +1,42 @@
 ---
 nav:
-  title: Hooks
-  order: 5
+  title: 架构
+  order: 2
 group:
   title: Hooks
   order: 1
-title: useState 源码分析
+title: 源码分析
 order: 2
 ---
 
-# useState 源码分析
+# 源码分析
 
-从源码剖析 `useState` 的执行过程
+从源码剖析 `useState` 的执行过程。
 
 示例代码：
 
 ```jsx | pure
-import React, { useState } from 'react'
-import './App.css'
+import React, { useState } from 'react';
+import './App.css';
 
 export default function App() {
-
   const [count, setCount] = useState(0);
   const [name, setName] = useState('Star');
 
   // 调用三次setCount便于查看更新队列的情况
   const countPlusThree = () => {
-    setCount(count+1);
-    setCount(count+2);
-    setCount(count+3);
-  }
+    setCount(count + 1);
+    setCount(count + 2);
+    setCount(count + 3);
+  };
   return (
-    <div className='App'>
-      <p>{name} Has Clicked <strong>{count}</strong> Times</p>
+    <div className="App">
+      <p>
+        {name} Has Clicked <strong>{count}</strong> Times
+      </p>
       <button onClick={countPlusThree}>Click *3</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -56,7 +57,7 @@ export default function App() {
 
 ```jsx | pure
 // 是类还是函数 —— 无所谓
-<Greeting />  // <p>Hello</p>
+<Greeting /> // <p>Hello</p>
 ```
 
 如果 `Greeting` 是一个函数，React 需要调用它：
@@ -82,8 +83,8 @@ class Greeting extends React.Component {
 }
 
 // React 内部
-const instance = new Greeting(props);  // Greeting {}
-const result = instance.render();      // <p>Hello</p>
+const instance = new Greeting(props); // Greeting {}
+const result = instance.render(); // <p>Hello</p>
 ```
 
 React 通过以下方式来判断组件的类型：
@@ -96,7 +97,6 @@ Component.prototype.isReactComponent = {};
 // 检查方式
 class Greeting extends React.Component {}
 console.log(Greeting.prototype.isReactComponent); // {}
-
 ```
 
 ### React Fiber
@@ -151,12 +151,7 @@ Fiber 的增量更新需要更多的上下文信息，之前的 VirtualDOM Tree 
 与 Fiber 有关的所有代码位于 [packages/react-reconciler](https://github.com/facebook/react/tree/v16.8.6/packages/react-reconciler) 中，一个 Fiber 节点的详细定义如下：
 
 ```js
-function FiberNode(
-  tag: WorkTag,
-  pendingProps: mixed,
-  key: null | string,
-  mode: TypeOfMode,
-) {
+function FiberNode(tag: WorkTag, pendingProps: mixed, key: null | string, mode: TypeOfMode) {
   // Instance
   this.tag = tag;
   this.key = key;
@@ -213,12 +208,12 @@ function FiberNode(
 > 例如，当 React 16.3 添加了 Context API，`React.createContext()` API 会被 React 包暴露出来。
 >
 > 但是 `React.createContext()` 其实并没有实现 `context`。因为在 `React DOM` 和 `React DOM Server` 中同样一个 API 应当有不同的实现。所以 `createContext()` 只返回了一些普通对象：
-> **所以，如果你将 `react` 升级到了16.3+，但是不更新 `react-dom`，那么你就使用了一个尚不知道 `Provider` 和 `Consumer` 类型的渲染器。**这就是为什么老版本的 `react-dom` 会报错说这些类型是无效的。
+> **所以，如果你将 `react` 升级到了 16.3+，但是不更新 `react-dom`，那么你就使用了一个尚不知道 `Provider` 和 `Consumer` 类型的渲染器。**这就是为什么老版本的 `react-dom` 会报错说这些类型是无效的。
 
 这就是 `setState` 尽管定义在 React 包中，调用时却能够更新 DOM 的原因。它读取由 `React DOM` 设置的 `this.updater`，让 `React DOM` 安排并处理更新。
 
 ```js
-Component.setState = function(partialState, callback) {
+Component.setState = function (partialState, callback) {
   // setState 所做的一切就是委托渲染器创建这个组件的实例
   this.updater.enqueueSetState(this, partialState, callback, 'setState');
 };
@@ -244,8 +239,6 @@ inst.updater = ReactNativeUpdater;
 ```
 
 至于 `updater` 的具体实现，就不是这里重点要讨论的内容了，下面让我们正式进入本文的主题：React Hooks。
-
-
 
 ## 了解 useState
 
@@ -298,7 +291,7 @@ function resolveDispatcher() {
 
 看到这里，我们回顾一下第一章第三小节所讲的 React 渲染器与 `setState`，是不是发现有点似曾相识。
 
-与 `updater` 是 `setState` 能够触发更新的核心类似，`ReactCurrentDispatcher.current.useState` 是 `useState`  能够触发更新的关键原因，这个方法的实现并不在`react` 包内。下面我们就来分析一个具体更新的例子。
+与 `updater` 是 `setState` 能够触发更新的核心类似，`ReactCurrentDispatcher.current.useState` 是 `useState` 能够触发更新的关键原因，这个方法的实现并不在`react` 包内。下面我们就来分析一个具体更新的例子。
 
 ### 示例分析
 
@@ -358,7 +351,6 @@ function beginWork(
   }
 }
 ```
-
 
 下面我们来找出 `useState` 发挥作用的地方。
 
@@ -478,26 +470,27 @@ export type Hook = {
 结合示例代码来看：
 
 ```jsx | pure
-import React, { useState } from 'react'
-import './App.css'
+import React, { useState } from 'react';
+import './App.css';
 
 export default function App() {
-
   const [count, setCount] = useState(0);
   const [name, setName] = useState('Star');
 
   // 调用三次setCount便于查看更新队列的情况
   const countPlusThree = () => {
-    setCount(count+1);
-    setCount(count+2);
-    setCount(count+3);
-  }
+    setCount(count + 1);
+    setCount(count + 2);
+    setCount(count + 3);
+  };
   return (
-    <div className='App'>
-      <p>{name} Has Clicked <strong>{count}</strong> Times</p>
+    <div className="App">
+      <p>
+        {name} Has Clicked <strong>{count}</strong> Times
+      </p>
       <button onClick={countPlusThree}>Click *3</button>
     </div>
-  )
+  );
 }
 ```
 
@@ -524,7 +517,7 @@ export function renderWithHooks(
   Component: any,
   props: any,
   refOrContext: any,
-  nextRenderExpirationTime: ExpirationTime,
+  nextRenderExpirationTime: ExpirationTime
 ): any {
   renderExpirationTime = nextRenderExpirationTime;
   currentlyRenderingFiber = workInProgress;
@@ -535,11 +528,11 @@ export function renderWithHooks(
 
   // 用 nextCurrentHook 的值来区分 mount 和 update，设置不同的 dispatcher
   ReactCurrentDispatcher.current =
-      nextCurrentHook === null
-      // 初始化时
-        ? HooksDispatcherOnMount
-  		// 更新时
-        : HooksDispatcherOnUpdate;
+    nextCurrentHook === null
+      ? // 初始化时
+        HooksDispatcherOnMount
+      : // 更新时
+        HooksDispatcherOnUpdate;
 
   // 此时已经有了新的 dispatcher,在调用 Component 时就可以拿到新的对象
   let children = Component(props, refOrContext);
@@ -553,7 +546,7 @@ export function renderWithHooks(
   renderedWork.memoizedState = firstWorkInProgressHook;
   renderedWork.updateQueue = (componentUpdateQueue: any);
 
-   /** 省略与本文无关的部分代码，便于理解 **/
+  /** 省略与本文无关的部分代码，便于理解 **/
 }
 ```
 
@@ -616,43 +609,37 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
 重点讲一下返回的这个更新函数 `dispatchAction`。
 
 ```js
-function dispatchAction<S, A>(
-  fiber: Fiber,
-  queue: UpdateQueue<S, A>,
-  action: A,
-) {
-
-   /** 省略 Fiber 调度相关代码 **/
+function dispatchAction<S, A>(fiber: Fiber, queue: UpdateQueue<S, A>, action: A) {
+  /** 省略 Fiber 调度相关代码 **/
 
   // 创建新的新的 update, action 就是我们 setCount 里面的值 (count+1, count+2, count+3…)
-    const update: Update<S, A> = {
-      expirationTime,
-      action,
-      eagerReducer: null,
-      eagerState: null,
-      next: null,
-    };
+  const update: Update<S, A> = {
+    expirationTime,
+    action,
+    eagerReducer: null,
+    eagerState: null,
+    next: null,
+  };
 
-    // 重点：构建 queue
-    // queue.last 是最近的一次更新，然后 last.next 开始是每一次的 action
-    const last = queue.last;
-    if (last === null) {
-      // 只有一个 update, 自己指自己-形成环
-      update.next = update;
-    } else {
-      const first = last.next;
-      if (first !== null) {
-
-        update.next = first;
-      }
-      last.next = update;
+  // 重点：构建 queue
+  // queue.last 是最近的一次更新，然后 last.next 开始是每一次的 action
+  const last = queue.last;
+  if (last === null) {
+    // 只有一个 update, 自己指自己-形成环
+    update.next = update;
+  } else {
+    const first = last.next;
+    if (first !== null) {
+      update.next = first;
     }
-    queue.last = update;
+    last.next = update;
+  }
+  queue.last = update;
 
-    /** 省略特殊情况相关代码 **/
+  /** 省略特殊情况相关代码 **/
 
-    // 创建一个更新任务
-    scheduleWork(fiber, expirationTime);
+  // 创建一个更新任务
+  scheduleWork(fiber, expirationTime);
 }
 ```
 
@@ -758,8 +745,8 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
 结合示例代码：
 
 - 当我们第一次调用 `[count, setCount] = useState(0)` 时，创建一个 `queue`
-- 每一次调用 `setCount(x)`，就 `dispach` 一个内容为 `x` 的 `action`（`action`  的表现为：将 `count` 设为 `x`），`action` 存储在 `queue` 中，以前面讲述的有环链表规则来维护
-- 这些 `action`  最终在 `updateReducer` 中被调用，更新到 `memorizedState` 上，使我们能够获取到最新的 `state` 值
+- 每一次调用 `setCount(x)`，就 `dispach` 一个内容为 `x` 的 `action`（`action` 的表现为：将 `count` 设为 `x`），`action` 存储在 `queue` 中，以前面讲述的有环链表规则来维护
+- 这些 `action` 最终在 `updateReducer` 中被调用，更新到 `memorizedState` 上，使我们能够获取到最新的 `state` 值
 
 ## 总结
 
@@ -774,17 +761,17 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
 
 以 `useState` 为例：
 
-和类组件存储state不同，React并不知道我们调用了几次 `useState`，对 `hooks` 的存储是按顺序的（参见 Hook 结构），一个 `hook` 对象的 `next` 指向下一个 `hooks`。所以当我们建立示例代码中的对应关系后，`Hook` 的结构如下：
+和类组件存储 state 不同，React 并不知道我们调用了几次 `useState`，对 `hooks` 的存储是按顺序的（参见 Hook 结构），一个 `hook` 对象的 `next` 指向下一个 `hooks`。所以当我们建立示例代码中的对应关系后，`Hook` 的结构如下：
 
 ```js
 // hook1: const [count, setCount] = useState(0) — 拿到state1
 {
-  memorizedState: 0
-  next : {
+  memorizedState: 0;
+  next: {
     // hook2: const [name, setName] = useState('Star') - 拿到state2
-    memorizedState: 'Star'
-    next : {
-      null
+    memorizedState: 'Star';
+    next: {
+      null;
     }
   }
 }
@@ -820,7 +807,7 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
   4. 执行到函数组件 `App()` 时，`useState` 会被重新执行，在 `resolve dispatcher` 的阶段拿到了负责更新的 `dispatcher`。
   5. `useState` 会拿到 Hook 对象，`Hook.queue` 中存储了更新队列，依次进行更新后，即可拿到最新的 `state`
   6. 函数组件 `App()` 执行后返回的 `nextChild` 中的 `count` 值已经是最新的了。`FiberNode` 中的 `memorizedState` 也被设置为最新的 `state`
-  7.  Fiber 渲染出真实 DOM，更新结束。
+  7. Fiber 渲染出真实 DOM，更新结束。
 
 ---
 

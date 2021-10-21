@@ -1,7 +1,7 @@
 ---
 nav:
-  title: Hooks
-  order: 5
+  title: 架构
+  order: 2
 group:
   title: Hooks
   order: 1
