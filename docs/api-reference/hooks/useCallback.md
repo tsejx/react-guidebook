@@ -4,7 +4,7 @@ nav:
   order: 4
 group:
   title: Hooks API
-  order: 2
+  order: 3
 title: useCallback
 order: 5
 ---

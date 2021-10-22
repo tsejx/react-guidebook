@@ -6,7 +6,7 @@ group:
   title: React
   order: 1
 title: React.children
-order: 7
+order: 10
 ---
 
 # React.Children
@@ -17,13 +17,15 @@ order: 7
 
 `React.Children.map` 用于对 `this.props.children` 的每个子级进行遍历。
 
-📖 **语法**
+语法：
 
 ```js
 React.Children.map(children, function[(child, index)])
 ```
 
-- 如果 `children` 是一个内嵌的**对象**或者**数组**，它将被遍历：不会传入容器对象到参数 `fn` 中。
+说明：
+
+- 如果 `children` 是一个内嵌的 **对象**或者**数组**，它将被遍历：不会传入容器对象到参数 `fn` 中；
 - 如果 `children` 参数是 `null` 或者 `undefined` ，那么返回 `null` 或者 `undefined` 而不是一个空对象。
 
 `this.props.children` 的值有三种可能：
@@ -36,13 +38,15 @@ React.Children.map(children, function[(child, index)])
 
 ## forEach
 
-**语法**
+语法：
 
 ```js
 React.Children.forEach(children, function[(child, index)])
 ```
 
-类似于 `React.Children.map` 但是不返回数组。
+说明：
+
+- 类似于 `React.Children.map` 但是不返回数组。
 
 ## count
 
@@ -52,27 +56,17 @@ React.Children.forEach(children, function[(child, index)])
 
 如果通过 `this.props.children.length` 判断字符串或函数时程序便会中断。
 
-📖 **语法**
+语法：
 
 ```js
 React.Children.count(children);
-```
-
-🌰 **示例**
-
-```js
-class ChildrenCounter extends React.Component {
-  render() {
-    return;
-  }
-}
 ```
 
 ## only
 
 `React.Children.only` 限制 `this.props.children` 只能为单个 React 组件，否则将抛出错误。
 
-📖 **语法**
+语法：
 
 ```js
 React.Children.only(children);
@@ -82,13 +76,13 @@ React.Children.only(children);
 
 `React.Children.toArray` 可将 `this.props.children` 转换为数组。
 
-📖 **语法**
+语法：
 
 ```js
 React.Children.toArray(children);
 ```
 
-🌰 **示例**
+代码示例：
 
 ```js
 class Sort extends React.Component {
@@ -98,6 +92,8 @@ class Sort extends React.Component {
   }
 }
 ```
+
+<br />
 
 ```js
 <Sort>
@@ -111,9 +107,9 @@ class Sort extends React.Component {
 
 上例会渲染为三个排好序的字符串。
 
-## 开发技巧
+## 最佳实践
 
-### 改变 Children 属性
+### 改变属性
 
 即便通过以前方法可以在子组件内部获得 `this.props.children` 以及其每个成员，但是要在子组件中改造 `this.props.children`（例如添加 Props 属性等）则需要使用辅助方法 `React.cloneElement` 。
 

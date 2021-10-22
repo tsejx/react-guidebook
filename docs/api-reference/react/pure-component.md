@@ -67,7 +67,7 @@ class App extends PureComponent {
     return (
       <div>
         <ul>
-          {this.state.items.map(i => (
+          {this.state.items.map((i) => (
             <li key={i}>{i}</li>
           ))}
         </ul>
@@ -212,9 +212,7 @@ class Foo extends (PureComponent || Component) {
 - `React.PureComponent` 适用于 class 组件
 - `React.PureComponent` 只是浅比较 `props`、`state`，`React.memo` 也是浅比较，但它可以自定义比较函数
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📝 React PureComponent 使用指南](http://www.wulv.site/2017-05-31/react-purecomponent.html)
 - [📝 当 PureComponent 遇上 ImmutableJS ，让 React 应用性能发挥到极致](http://www.wulv.site/2017-08-22/purecomponent-immutablejs.html)

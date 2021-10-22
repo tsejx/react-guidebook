@@ -1,3 +1,14 @@
+---
+nav:
+  title: 架构
+  order: 2
+group:
+  title: 新版架构
+  order: 1
+title: Scheduler
+order: 12
+---
+
 # Scheduler
 
 ## 参考资料

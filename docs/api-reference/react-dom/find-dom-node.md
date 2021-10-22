@@ -4,7 +4,7 @@ nav:
   order: 4
 group:
   title: ReactDOM
-  order: 2
+  order: 4
 title: ReactDOM.findDOMNode
 order: 4
 ---

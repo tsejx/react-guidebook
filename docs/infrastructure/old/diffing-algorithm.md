@@ -5,11 +5,11 @@ nav:
 group:
   title: 旧版架构
   order: 5
-title: diff 算法
+title: DOM DIFF 算法
 order: 2
 ---
 
-# diff 算法
+# DOM DIFF 算法
 
 diff 算法作为 Virtual DOM 的加速器，其算法的改进优化是 React 整个界面渲染的基础和性能的保障，同时也是 React 源码中最神秘的，最不可思议的部分
 

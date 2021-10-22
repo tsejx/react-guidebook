@@ -4,7 +4,7 @@ nav:
   order: 4
 group:
   title: ReactDOMServer
-  order: 3
+  order: 5
 title: ReactDOMServer.renderToStaticMarkup
 order: 2
 ---

@@ -6,18 +6,36 @@ group:
   title: React
   order: 1
 title: React.memo
-order: 2
+order: 13
 ---
 
 # React.memo
 
-> ✨ React v16.6.0 新增 memo 新特性 [官方文档](https://reactjs.org/docs/react-api.html#reactmemo)
+> ✨ React v16.6+ 新增 memo 新特性 [官方文档](https://reactjs.org/docs/react-api.html#reactmemo)
 
-Class Component 可以通过继承类 `PureComponent` 或者实现 `shouldComponentUpdate` 来主动判断组件是否需要重新渲染，以此来提高性能，但是 Functional Component 到目前为止没有类似的功能。
+类组件可以通过继承类 `PureComponent` 或者实现 `shouldComponentUpdate` 来主动判断组件是否需要重新渲染，以此来提高性能，但是函数组件到目前为止没有类似的功能。
 
-这种方式依然是一种对象的浅比较，有复杂对象时无法重新渲染。
+## 基本用法
 
-## 使用指南
+类型声明：
+
+```ts
+export function memo<Props>(
+  type: React$ElementType,
+  compare?: (oldProps: Props, newProps: Props) => boolean
+) {
+  // do something
+  const elementType = {
+    $$typeof: REACT_MEMO_TYPE,
+    type,
+    compare: compare === undefined ? null : compare,
+  };
+  // do something
+  return elementType;
+}
+```
+
+代码示例：
 
 ```jsx | pure
 function MyComponent(props) {
@@ -39,30 +57,22 @@ function areEqual(prevProps, nextProps) {
 export default React.memo(MyComponent, areEqual);
 ```
 
-🌰 **示例：**
+<br/>
 
-```jsx | pure
-const SubComponent = props => <>My name is {props.name}.</>;
+<code src="../../../example/memo/index.tsx" />
 
-// 创建 memo 组件
-const Memo = React.memo(SubComponent, (prevProps, nextProps) => {
-  // 当 name 相同时不重渲染，否则重渲染
-  return prevProps.name === nextProps.name;
-});
+说明：
 
-// 在页面上渲染
-const App = (
-  <div>
-    <Memo />
-  </div>
-);
-```
+- `React.memo` 接收两个参数，一个是组件，一个是（比较）函数
+  - **组件**：组件必须是函数式组件
+  - **函数**：这个函数就是定义组件是否需要重渲染的钩子，该函数传入两个参数，第一个参数为上次渲染的 `props`，第二参数为本次渲染的 `props`
+- 函数返回值为 `true` 时复用最近一次渲染，否则 `false` 重新渲染
 
-`React.memo` 接收两个参数，一个是组件，一个是函数。这个函数就是定义组件是否需要重渲染的钩子，该函数传入两个参数，第一个参数为上次渲染的 `props`，第二参数为本次渲染的 `props`。
+⚠️ **注意**：
 
----
+- 如果不通过比较函数进行比较，那么依然是一种对象的浅比较，有复杂对象时无法重新渲染
 
-**参考资料：**
+## 参考资料
 
 - [React 优化 记忆性技术 使用闭包提升你的 React 性能](https://segmentfault.com/a/1190000015301672)
 - [React 16.6 新 API](http://www.ayqy.net/blog/react-16-6%E6%96%B0api/)
