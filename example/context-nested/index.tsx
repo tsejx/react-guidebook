@@ -39,12 +39,20 @@ function ThemeTogglerButton() {
   );
 }
 
+function Content() {
+  return (
+    <div>
+      <ThemeTogglerButton />
+    </div>
+  );
+}
+
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.toggleTheme = () => {
-      this.setState(state => ({
+      this.setState((state) => ({
         theme: state.theme === themes.dark ? themes.light : themes.dark,
       }));
     };
@@ -63,14 +71,6 @@ class App extends React.Component {
       </ThemeContext.Provider>
     );
   }
-}
-
-function Content() {
-  return (
-    <div>
-      <ThemeTogglerButton />
-    </div>
-  );
 }
 
 export default () => <App />;

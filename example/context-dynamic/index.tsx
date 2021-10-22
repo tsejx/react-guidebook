@@ -13,17 +13,17 @@ const themes = {
 };
 
 // 创建 Context 对象
-const ThemeContext = React.createContext(
-  themes.dark // 默认值
-);
+const ThemeContext = React.createContext(themes.dark);
 
 // ThemedButton
 class ThemedButton extends React.Component {
   render() {
     let props = this.props;
-    // 外部创建的 Context 静态挂载了 contextType
+
+    // ⭐️ 外部创建的 Context 静态挂载了 contextType
     // 所以可以获取到对应的 Context 对象
     let theme = this.context;
+
     return (
       <button
         {...props}
@@ -32,7 +32,7 @@ class ThemedButton extends React.Component {
           outline: 'none',
           color: theme.color,
           backgroundColor: theme.background,
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
         Submit
@@ -45,9 +45,8 @@ class ThemedButton extends React.Component {
 // 内部通过 this.context 可以消费
 ThemedButton.contextType = ThemeContext;
 
-// App.js
 // 一个使用 ThemedButton 的中间组件
-function Toolbar(props) {
+const Toolbar = (props) => {
   return <ThemedButton onClick={props.changeTheme}>Change Theme</ThemedButton>;
 }
 
@@ -59,7 +58,7 @@ class App extends React.Component {
     };
 
     this.toggleTheme = () => {
-      this.setState(state => ({
+      this.setState((state) => ({
         theme: state.theme === themes.dark ? themes.light : themes.dark,
       }));
     };
