@@ -25,12 +25,12 @@ order: 4
 
 **属性代理**（Props Proxy）：输出一个组件，它基于被包裹组件进行 **功能增强**。
 
-🌰 **示例：**
+代码示例：
 
 ```jsx | pure
 import React from 'react';
 
-const MyContainer = (WrappedComponent) =>
+const HighOrderComponent = (WrappedComponent) =>
   class extends Component {
     render() {
       return <WrapperdComponent {...this.props} />;
@@ -48,42 +48,15 @@ const MyContainer = (WrappedComponent) =>
 
 我们可以读取、增加、编辑或是移除从原组件（WrappedComponent）传进来的 `props`，但需要小心删除与编辑重要的 `props`。我们应该尽可能对高阶组件的 `props` 作新的命名以防止混淆。
 
-```js
-import React from 'react';
+<code src="../../../example/hoc-default-props/index.tsx" />
 
-const MyContainer = (WrappedComponent) =>
-  class extends React.Component {
-    render() {
-      const newProps = {
-        name: nextName,
-      };
-      return <WrappedComponent {...this.props} {...newProps} />;
-    }
-  };
-```
+当调用高阶组件时，可以在组件内部接收到 `name` 的 `props` 了。对于原组件来说，只要套用这个高阶组件，我们的新组件中就会多一个 `name` 的 `props`。
 
-当调用高阶组件时，可以使用新的 props name 了。对于原组件来说，只要套用这个高阶组件，我们的新组件中就会多一个 name 的 props。
-
-### 通过 Refs 使用引用
+### 传递 Refs 引用
 
 在高阶组件中，我们可以接受 Refs 使用原组件（WrappedComponent）的引用。
 
-```js
-import React from 'react';
-
-const MyContainer = (WrappedComponent) =>
-  class extends React.Component {
-    proc(wrappedComponentInstance) {
-      wrappedComponentInstantce.mdethod();
-    }
-    render() {
-      const props = Object.assign({}, this.props, {
-        ref: this.proc.bind(this),
-      });
-      return <WrappedComponent {...props} />;
-    }
-  };
-```
+<code src="../../../example/hoc-refs/index.tsx" />
 
 当原组件（WrappedComponent）被渲染时，Refs 回调函数就会被执行，这样就会拿到一份原组件（WrappedComponent）实例的引用。这就可以方便地用于读取或增加实例的 Props，并调用实例的方法。
 
@@ -103,9 +76,9 @@ const MyContainer = (WrappedCompoenent) =>
       this.state = {
         name: '',
       };
-      this.onNameChange = this.onNameChange.bind(this);
+      this.handleNameChange = this.handleNameChange.bind(this);
     }
-    onNameChange(event) {
+    handleNameChange(event) {
       this.setState({
         name: event.target.value,
       });
@@ -114,7 +87,7 @@ const MyContainer = (WrappedCompoenent) =>
       const newProps = {
         name: {
           value: this.state.name,
-          onChange: this.onNameChange,
+          onChange: this.handleNameChange,
         },
       };
       return <WrappedCompoennt {...this.props} {...newProps} />;
@@ -133,22 +106,9 @@ export default MyContainer(namedInput);
 
 此外，我们还可以使用其他元素来包裹原组件（WrappedComponent），这既可以是为了加样式，也可以是为了布局。
 
-🌰 **示例：增加一层定义样式**
+代码示例：
 
-```js
-import React, { Component } from 'react'
-
-const MyContainer = (WrappedCompoennt) =>
-     class extends Component {
-         render() {
-             return {
-                 <div style={{display: 'block'}}>
-                     <WrappedComponent {...this.props} />
-                 </div>
-             }
-         }
-     }
-```
+<code src="../../../example/hoc-style/index.tsx" />
 
 ## 反向继承
 
@@ -156,7 +116,7 @@ const MyContainer = (WrappedCompoennt) =>
 
 这种方式返回的 React 组件继承了被传入的组件，所以它能够访问到的区域、权限更多，相比属性代理方式，它更像打入组织内部，对其进行修改。
 
-🌰 **示例：**
+代码示例：
 
 ```js
 const MyContainer = (WrappedCompoenent) =>
@@ -187,42 +147,17 @@ didmount => HOC didmount => (HOCs didmount) => will unmount => HOC will unmount 
 
 **条件渲染**：根据条件，渲染不同的组件。
 
-🌰 **示例：条件渲染**
+代码示例：
 
-```js
-const MyContainer = (WrappedComponent) =>
-  class extends WrappedComponent {
-    render() {
-      if (this.props.loggedIn) {
-        return super.render();
-      } else {
-        return null;
-      }
-    }
-  };
-```
+<code src="../../../example/hoc-conditional-render/index.tsx" />
 
 #### 修改渲染
 
 **修改渲染**：可以直接修改被包裹组件渲染出的 React 元素树。
 
-🌰 **示例：修改渲染**
+代码示例：
 
-```js
-const MyContainer = (WrappedComponent) =>
-  class extends WrappedComponent {
-    render() {
-      const elementsTree = super.render();
-      let newProps = {};
-      if (elementsTree && elementsTree.type === 'input') {
-        newProps = { value: 'may the force be with you' };
-      }
-      const props = Object.assign({}, elementsTree.props, newProps);
-      const newElementsTree = React.cloneElement(elementsTree, props, elementsTree.props.children);
-      return newElementsTree;
-    }
-  };
-```
+<code src="../../../example/hoc-modified-render/index.tsx" />
 
 ### 操作状态
 
@@ -311,9 +246,7 @@ const performance = (WrappedComponent) => {
 - **静态方法**：元组件上的静态方法并无法被自动传出，会导致业务层无法调用，因此需要通过函数导出或者静态方法赋值两种方法解决；
 - **重新渲染**：由于增强函数每次调用是返回一个新组件，因此如果在 Render 中使用增强函数，就会导致每次都重新渲染整个 HOC，而且之前的状态会丢失；
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📝 中高级前端大厂面试秘籍](https://juejin.im/post/5c92f499f265da612647b754)
 - [📝 从 0 到 1 实现 React 系列—— HOC 探秘](https://juejin.im/post/5b837692f265da434015865a)

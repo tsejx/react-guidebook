@@ -14,6 +14,9 @@ order: 1
 
 ## 资源聚集
 
+- [awesome-react]()
+- [awesome-react-render-props](https://github.com/jaredpalmer/awesome-react-render-props) Awesome list of React components with render props
+
 ### 模块项目
 
 - [made with react.js](https://madewithreactjs.com/) A collection of projects made with vue.js

@@ -381,9 +381,7 @@ class Component extends React.Component {
   - `componentDidUpdate`
 - `setState` 的多次调用产生的效果将被合并
 
----
-
-**引用参考：**
+## 参考资料
 
 - [📝 React：setState 详解](https://juejin.im/post/5a155f906fb9a045284622b4)
 - [📝 揭秘 React setState](https://juejin.im/post/5b87d14e6fb9a01a18268caf)

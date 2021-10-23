@@ -24,16 +24,18 @@ React 的核心思想是每次对于变更 `props` 或 `state`，触发新旧 Vi
 - 传入函数，该函数会在 DOM 被挂载时进行回调，这个函数会传入一个元素对象，可以自己保存，使用时，直接拿到之前保存的元素对象即可
 - 传入 Hook，Hook 通过 `useRef()` 方式创建，使用时通过生成 Hook 对象的 `current` 属性就是对应的元素
 
-### 传入字符串
+### 字符串形式
+
+> 🗑 已过时并可能会在未来的版本中被移除
 
 ```js
-class MyComponent extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
-    this.myRef = React.createRef();
+    this.divRef = React.createRef();
   }
   render() {
-    return <div ref="myref"></div>;
+    return <div ref="divRef"></div>;
   }
 }
 ```
@@ -44,74 +46,35 @@ class MyComponent extends React.Component {
 this.refs.myref.innerHTML = 'hello';
 ```
 
-### 传入对象
+### 对象形式
 
-`refs` 通过 `React.createRef()` 创建，然后将 `ref` 属性添加到 React 元素中：
+`ref` 通过 `React.createRef()` 创建，然后将 `ref` 属性添加到 React 元素中。
 
-```js
-class MyComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.myRef = React.createRef();
-  }
-  render() {
-    return <div ref={this.myRef} />;
-  }
-}
-```
+代码示例：
 
-当 `ref` 被传递给 `render` 中的元素时，对该节点的引用可以在 `ref` 的 `current` 属性中访问。
+<code src="../../../example/ref-object/index.tsx" />
 
-```js
-const node = this.myRef.current;
-```
-
-### 传入函数
+### 函数形式
 
 当 `ref` 传入为一个函数的时候，在渲染过程中，回调函数参数会传入一个元素对象，然后通过过实例将对象进行保存。
 
-```js
-class MyComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.myRef = React.createRef();
-  }
-  render() {
-    return <div ref={(element) => (this.myref = element)}></div>;
-  }
-}
-```
+代码示例：
 
-获取 `ref` 对象只需要通过先前存储的对象即可。
+<code src="../../../example/ref-function/index.tsx" />
 
-```js
-const node = this.myref;
-```
+### Hook 形式
 
-### 传入 Hook
+通过 [useRef](../../api-api-reference/hooks/useRef) 创建一个 ref，整体使用方式与 `React.createRef` 一致。'
 
-通过 `useRef` 创建一个 `ref`，整体使用方式与 `React.createRef` 一致。
+代码示例：
 
-```js
-function App(props) {
-  const myref = useRef();
-  return (
-    <>
-      <div ref={myref}></div>
-    </>
-  );
-}
-```
+<code src="../../../example/ref-hook/index.tsx" />
 
-获取 `ref` 属性也是通过 Hook 对象的 `current` 属性
+说明：
 
-```js
-const node = myref.current;
-```
-
-上述三种情况都是 `ref` 属性用于原生 HTML 元素上，如果 `ref` 设置的组件为一个类组件的时候，`ref` 对象接收到的是组件的挂载实例。
-
-注意的是，不能在函数组件上使用 `ref` 属性，因为他们并没有实例。
+- 上述三种情况都是 `ref` 属性用于原生 HTML 元素上
+- 如果 `ref` 设置的组件为一个类组件的时候，`ref` 对象接收到的是组件的挂载实例。
+- 需要注意的是，不能在函数组件上使用 `ref` 属性，因为他们并没有实例。
 
 ## 应用场景
 
@@ -158,9 +121,7 @@ class Form extends React.Component {
 - `React.findDOMNode` 和 `refs` 都无法用于无状态组件中。因为，无状态组件挂载时只是方法调用，并没有创建实例。
 - 对于 React 组件来讲，`refs` 会指向一个组件类实例，所以可以调用该类定义的任何方法。如果需要访问该组件的真实 DOM，可以用 `ReactDOM.findDOMNode` 来找到 DOM 节点，但并不推荐这样做，因为这大部分情况下都打破了封装性，而且通常都能用更清晰的方法在 React 中构建代码。
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📝 React ref 的前世今生](https://juejin.im/post/5b59287af265da0f601317e3)
 - [📝 React16 新特征总览](https://zhuanlan.zhihu.com/p/34604934)

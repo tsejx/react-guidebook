@@ -809,9 +809,7 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
   6. 函数组件 `App()` 执行后返回的 `nextChild` 中的 `count` 值已经是最新的了。`FiberNode` 中的 `memorizedState` 也被设置为最新的 `state`
   7. Fiber 渲染出真实 DOM，更新结束。
 
----
-
-**参考资料：**
+## 参考资料
 
 - [📝 从源码剖析 useState 的执行过程](https://juejin.im/post/6844903833764642830)
 - [📝 React Hooks 源码解析：useState](https://juejin.im/post/6844903990958784526)

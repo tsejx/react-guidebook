@@ -96,9 +96,7 @@ function onRenderCallback(
 > ⚠️ **注意**：Interactions 能用來识别更新是由什么引起的，尽管这个追踪更新的 API 依然是实验性质的。
 > 从 [fb.me/react-interaction-tracing](https://fb.me/react-interaction-tracing) 了解更多
 
----
-
-**参考资料：**
+## 参考资料
 
 - [React Profiler 介绍](https://juejin.im/post/5ba0f8e4f265da0ab915bcf2)
 - [React 性能测量和分析](https://juejin.im/post/5d06bf0a51882528194a9736)
