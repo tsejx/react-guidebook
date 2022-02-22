@@ -14,7 +14,9 @@ order: 1
 
 ## 资源聚集
 
-- [awesome-react]()
+- [awesome-react](https://github.com/enaqx/awesome-react)
+- [awesome-react-hooks](https://github.com/rehooks/awesome-react-hooks)
+- [awesome-react-component](https://github.com/brillout/awesome-react-components)
 - [awesome-react-render-props](https://github.com/jaredpalmer/awesome-react-render-props) Awesome list of React components with render props
 
 ### 模块项目

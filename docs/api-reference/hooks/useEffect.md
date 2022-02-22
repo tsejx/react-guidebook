@@ -110,6 +110,13 @@ useEffect(() => {
 
 依赖项数组不会作为参数传给 effect 函数。虽然从概念上来说它表现为：所有 effect 函数中引用的值都应该出现在依赖项数组中。未来编译器会更加智能，届时自动创建数组将成为可能。
 
+## 最佳实践
+
+- 变化量创建在 `state` 中
+- 通过某种方式（例如点击）控制变化量改变
+- 因为在 `state` 中，因此变化量改变，DOM 渲染
+- DOM 渲染完成，副作用逻辑执行
+
 ## 参考资料
 
 - [📝 useEffect 完全指南](https://overreacted.io/zh-hans/a-complete-guide-to-useeffect/)

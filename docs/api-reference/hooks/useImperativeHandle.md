@@ -37,3 +37,5 @@ export function useImperativeHandle<T>(
 代码示例：
 
 <code src="../../../example/useImperativeHandle/index.tsx" />
+
+## 最佳实践
